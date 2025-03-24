@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('/fonts/Oswald-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+}
+
+body {
+    width: 100%;
+}
+
+:root {
+    font-family: Oswald, sans-serif;
+    line-height: 1.5;
+    font-weight: 500;
+
+    color-scheme: light dark;
+    color: #E0E0E0;
+    background-color: #242424;
+
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: auto;
+    max-width: 1600px;
+    width: 100%;
+    padding: 0 30px;
+
+}
+
+
+input:focus {
+    outline: none;
+    background-color: #242424;
+}
+
