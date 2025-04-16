@@ -13,7 +13,10 @@ function App() {
     if (data) {
       const decoded = jwtDecode(data.accessToken);
       if (!decoded.sub) return;
+      localStorage.setItem('token', data.accessToken);
       dispatch(authUser({ email: decoded.sub }));
+    } else {
+      localStorage.removeItem('token');
     }
   });
 
