@@ -2,21 +2,19 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface User {
-  id: string;
   email: string;
 }
 
 interface IAuth {
   isAuth: boolean;
-  count: number;
+  authLoading: boolean;
   user: User;
 }
 
 const initialState: IAuth = {
   isAuth: false,
-  count: 0,
+  authLoading: false,
   user: {
-    id: '',
     email: '',
   },
 };
@@ -29,9 +27,12 @@ const authSlice = createSlice({
       state.isAuth = true;
       state.user = action.payload;
     },
+    setAuthLoading(state, action: PayloadAction<boolean>) {
+      state.authLoading = action.payload;
+    },
   },
 });
 
-export const { authUser } = authSlice.actions;
+export const { authUser, setAuthLoading } = authSlice.actions;
 
 export default authSlice;
