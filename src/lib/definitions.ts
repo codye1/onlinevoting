@@ -53,3 +53,46 @@ export const signupFormState = z
     message: 'Passwords do not match.',
     path: ['confirmPassword'],
   });
+
+export type addPollFormState =
+  | {
+      errors?: {
+        title?: string[];
+        description?: string[];
+        options?: string[];
+        visibility?: string[];
+        type?: string[];
+        date?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const addPollFormSchema = z.object({
+  title: z
+    .string()
+    .min(1, { message: 'Title is required.' })
+    .max(100, { message: 'Title must be 100 characters or less.' })
+    .trim(),
+  description: z
+    .string()
+    .max(500, { message: 'Description must be 500 characters or less.' })
+    .optional(),
+  options: z
+    .array(z.string().min(1, { message: 'Option cannot be empty.' }))
+    .min(1, { message: 'At least two non-empty options are required.' }),
+  type: z.string().min(1, { message: 'Option cannot be empty.' }),
+  visibility: z.string().min(1, { message: 'Option cannot be empty.' }),
+  date: z
+    .date()
+    .optional()
+    .refine(
+      (date) => {
+        if (!date) return true;
+        const now = new Date();
+        const minFutureTime = new Date(now.getTime() + 2 * 60 * 1000);
+        return date >= minFutureTime;
+      },
+      { message: 'Date must be at least 2 minutes in the future.' },
+    ),
+});

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { authUser } from './reducer/auth.ts';
+import Header from './components/Header/Header.tsx';
 
 function App() {
   const { data } = useRefreshQuery();
@@ -22,6 +23,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Header />
       <Routing />
     </BrowserRouter>
   );

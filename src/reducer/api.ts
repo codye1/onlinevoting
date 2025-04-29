@@ -6,6 +6,7 @@ import type {
   FetchArgs,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query';
+import { Poll } from '../actions/addPoll.ts';
 
 interface AuthResponce {
   accessToken: string;
@@ -66,6 +67,13 @@ export const apiSlice = createApi({
         }),
       },
     ),
+    addPoll: builder.mutation<AuthResponce, Poll>({
+      query: (poll) => ({
+        url: 'polls',
+        method: 'POST',
+        body: { ...poll },
+      }),
+    }),
     refresh: builder.query<AuthResponce, void>({
       query: () => 'auth/refresh',
     }),
