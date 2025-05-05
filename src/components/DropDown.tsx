@@ -64,7 +64,7 @@ const DropDown = ({
       </button>
 
       {isOpen && (
-        <ul className="absolute z-10 bg-[#4B4B4B] border border-gray-600 rounded-sm mt-[-2px] w-full max-h-60 overflow-y-auto shadow-lg m-[5px]">
+        <ul className="absolute z-10 bg-[#4B4B4B] border border-gray-600 rounded-sm mt-[-2px] w-full max-h-60 overflow-y-auto shadow-lg m-[5px] overflow-x-hidden overflow-y-auto no-scrollbar">
           {options.map((option) => (
             <li
               key={option.value}

@@ -1,90 +1,100 @@
 @import 'tailwindcss';
 
 @font-face {
-  font-family: 'Oswald';
-  src: url('/fonts/Oswald-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: normal;
+    font-family: 'Oswald';
+    src: url('/fonts/Oswald-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
 }
 
 body {
-  width: 100%;
+    width: 100%;
 }
 
 :root {
-  font-family: Oswald, sans-serif;
-  line-height: 1.5;
-  font-weight: 500;
+    font-family: Oswald, sans-serif;
+    line-height: 1.5;
+    font-weight: 500;
 
-  color-scheme: light dark;
-  color: #e0e0e0;
-  background-color: #242424;
+    color-scheme: light dark;
+    color: #e0e0e0;
+    background-color: #242424;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  margin: auto;
-  max-width: 1600px;
-  width: 100%;
-  padding: 0 30px;
+    margin: auto;
+    max-width: 1600px;
+    width: 100%;
+    padding: 0 30px;
 }
 
 input:focus {
-  outline: none;
-  background-color: #808080;
+    outline: none;
+    background-color: #808080;
 }
 
 textarea:focus {
-  outline: none;
-  background-color: #808080;
+    outline: none;
+    background-color: #808080;
 }
 
 /* HTML: <div class="loader"></div> */
 .loader {
-  width: 20px;
-  padding: 4px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #242424;
-  --_m:
-    conic-gradient(from 0deg at 50% 50%, transparent 10%, black),
+    width: 20px;
+    padding: 4px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #242424;
+    --_m: conic-gradient(from 0deg at 50% 50%, transparent 10%, black),
     linear-gradient(black, black) content-box;
-  -webkit-mask: var(--_m);
-  mask: var(--_m);
-  -webkit-mask-composite: source-out;
-  mask-composite: subtract;
-  animation: l3 0.5s infinite linear;
+    -webkit-mask: var(--_m);
+    mask: var(--_m);
+    -webkit-mask-composite: source-out;
+    mask-composite: subtract;
+    animation: l3 0.5s infinite linear;
 }
 
 @keyframes l3 {
-  to {
-    transform: rotate(1turn);
-  }
+    to {
+        transform: rotate(1turn);
+    }
 }
 
 .toggle-checkbox {
-  user-select: none;
+    user-select: none;
 }
 
 .toggle-switch {
-  display: inline-block;
+    display: inline-block;
 }
 
 .toggle-knob {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .my-calendar .react-calendar {
-  color: white;
-  background-color: #4b4b4b;
+    color: white;
+    background-color: #4b4b4b;
 }
 
 .my-calendar .react-calendar__tile--active {
-  background-color: #242424;
+    background-color: #242424;
+}
+
+
+/* Приховати скрол-бар для всіх браузерів */
+.no-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none; /* Internet Explorer, Edge */
+    scrollbar-width: none; /* Firefox */
 }

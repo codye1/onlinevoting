@@ -7,15 +7,23 @@ import { useDispatch } from 'react-redux';
 import { authUser } from './reducer/auth.ts';
 import Header from './components/Header/Header.tsx';
 
+interface DecodedToken {
+  sub: string;
+  email: string;
+  iat: number;
+  exp: number;
+}
+
 function App() {
   const { data } = useRefreshQuery();
   const dispatch = useDispatch();
   useEffect(() => {
     if (data) {
-      const decoded = jwtDecode(data.accessToken);
+      const decoded = jwtDecode<DecodedToken>(data.accessToken);
       if (!decoded.sub) return;
+      console.log(decoded);
       localStorage.setItem('token', data.accessToken);
-      dispatch(authUser({ email: decoded.sub }));
+      dispatch(authUser({ email: decoded.email, id: decoded.sub }));
     } else {
       localStorage.removeItem('token');
     }

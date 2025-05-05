@@ -29,8 +29,10 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
   const [date, setDate] = useState<Value>(new Date());
   const [state, action] = useActionState(addPoll, undefined);
   const [typePoll, setTypePoll] = useState('multiple');
+  const [modalUploadImageOpen, setModalUploadImageOpen] = useState(false);
+  const [image, setImage] = useState<string | undefined>();
   const [uploadedImages, setUploadedImages] = useState<
-    { file: File; title: string }[]
+    { file: string; title: string }[]
   >([]);
   const isLoading = useAppSelector((state) => state.general.buttonLoading);
 
@@ -59,7 +61,7 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
     setOptionsList(updatedOptions);
   };
 
-  const handleImagesChange = (images: File[]) => {
+  const handleImagesChange = (images: string[]) => {
     // Convert new images to objects with empty titles and append to existing images
     const newImages = images.map((file) => ({ file, title: '' }));
     setUploadedImages((prev) => [...prev, ...newImages]); // Append instead of replace
@@ -114,8 +116,19 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                   label={'Description'}
                   errors={state?.errors?.description}
                 />
-                <div className={'flex justify-between p-[5px]'}>
-                  <MyButton icon={img} label={'Add image'} type={'button'} />
+                <div className={'flex justify-between p-[5px] flex-col'}>
+                  {image ? (
+                    <img src={image} alt="" />
+                  ) : (
+                    <MyButton
+                      icon={img}
+                      label={'Add image'}
+                      type={'button'}
+                      onClick={() => {
+                        setModalUploadImageOpen(true);
+                      }}
+                    />
+                  )}
                   <p
                     className={
                       'text-base cursor-pointer mt-[10px] font-light opacity-50 flex items-center'
@@ -124,6 +137,20 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                   >
                     Приховати опис
                   </p>
+                  {modalUploadImageOpen && (
+                    <Modal close={() => setModalUploadImageOpen(false)}>
+                      <div className={'p-[20px]'}>
+                        <ImageUploadInput
+                          name={'image'}
+                          onImagesChange={(url) => {
+                            setImage(url[0]);
+                            setModalUploadImageOpen(false);
+                          }}
+                          maxImages={1}
+                        />
+                      </div>
+                    </Modal>
+                  )}
                 </div>
               </>
             ) : (
@@ -141,6 +168,7 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                 Добавити опис або фото
               </p>
             )}
+            <input type={'hidden'} value={image} name={'image'} />
             <DropDown
               className={'w-1/4'}
               name={'type'}
@@ -185,7 +213,7 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                     uploadedImages.map((item, index) => (
                       <div key={index} className="relative">
                         <img
-                          src={URL.createObjectURL(item.file)}
+                          src={item.file}
                           alt={`Uploaded ${index}`}
                           className="h-32 rounded-md object-contain border border-gray-300 dark:border-gray-700 m-auto"
                         />
@@ -203,20 +231,13 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                         <button
                           type="button"
                           onClick={() => removeImage(index)}
-                          className="absolute right-0 top-0 mr-2 mt-2 cursor-pointer"
+                          className="absolute right-0 top-0  cursor-pointer"
                         >
-                          <svg
-                            className="h-5 w-5 text-gray-400"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                          <img
+                            className={'w-[20px] h-[20px]'}
+                            src={close}
+                            alt=""
+                          />
                         </button>
                       </div>
                     ))}
