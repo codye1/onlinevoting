@@ -2,6 +2,8 @@ import { loginFormSchema, loginFormState } from '../lib/definitions.ts';
 import { store } from '../reducer/store.ts';
 import { apiSlice } from '../reducer/api.ts';
 import { authUser, setAuthLoading } from '../reducer/auth.ts';
+import { jwtDecode } from 'jwt-decode';
+import { DecodedToken } from '../App.tsx';
 
 type apiError = {
   data: {
@@ -37,8 +39,9 @@ const login = async (_state: loginFormState, formData: FormData) => {
     // Обробка успішного результату
     localStorage.setItem('token', result.accessToken);
     console.log('Успішний вхід:', result);
+    const decoded = jwtDecode<DecodedToken>(result.accessToken);
     store.dispatch(setAuthLoading(false));
-    store.dispatch(authUser({ email }));
+    store.dispatch(authUser({ id: decoded.sub, email }));
   } catch (error) {
     if (typeof error === 'object' && error !== null && 'data' in error) {
       const err = error as apiError;

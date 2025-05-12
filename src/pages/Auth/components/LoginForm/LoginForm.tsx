@@ -1,8 +1,9 @@
-import TextInput, { types } from '../../../../components/TextInput.tsx';
 import MyButton from '../../../../components/MyButton.tsx';
 import login from '../../../../actions/login.ts';
 import { FormEvent, startTransition, useActionState } from 'react';
 import { useAppSelector } from '../../../../hooks/hooks.tsx';
+import TextInput from '../../../../components/TextInput.tsx';
+import { types } from '../../../../lib/types.ts';
 
 interface LoginForm {
   onHaveAccount: () => void;

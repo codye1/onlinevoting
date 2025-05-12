@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export interface User {
   email: string;
+  id: string;
 }
 
 interface IAuth {
@@ -16,6 +17,7 @@ const initialState: IAuth = {
   authLoading: false,
   user: {
     email: '',
+    id: '',
   },
 };
 
