@@ -7,10 +7,8 @@ export const formatTimeAgo = (timestamp: string): string => {
   const now = new Date();
   const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diff < 60) return `${diff} second${diff === 1 ? '' : 's'} ago`;
-  if (diff < 3600)
-    return `${Math.floor(diff / 60)} minute${Math.floor(diff / 60) === 1 ? '' : 's'} ago`;
-  if (diff < 86400)
-    return `${Math.floor(diff / 3600)} hour${Math.floor(diff / 3600) === 1 ? '' : 's'} ago`;
-  return `${Math.floor(diff / 86400)} day${Math.floor(diff / 86400) === 1 ? '' : 's'} ago`;
+  if (diff < 60) return `${diff} секунд назад`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} минут назад`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} годин  назад`;
+  return `${Math.floor(diff / 86400)} днів назад`;
 };

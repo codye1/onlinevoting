@@ -11,12 +11,6 @@ const Header = () => {
       >
         Home
       </a>
-      <a
-        className={`m-[5px] ${location.pathname == '/profile' && 'opacity-50'}`}
-        href="/profile"
-      >
-        Profile
-      </a>
     </header>
   );
 };

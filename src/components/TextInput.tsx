@@ -1,10 +1,5 @@
 import { ChangeEvent } from 'react';
-
-export enum types {
-  email = 'email',
-  password = 'password',
-  text = 'text',
-}
+import { types } from '../lib/types.ts';
 
 interface TextInput {
   label?: string;

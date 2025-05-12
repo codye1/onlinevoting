@@ -130,7 +130,7 @@ const ResultsMenu = ({ poll }: ResultsMenu) => {
                       <div className="text-base sm:text-lg font-medium">
                         {option.percent} %
                       </div>
-                      <div>({option.votes} votes)</div>
+                      <div>({option.votes} голосів)</div>
                     </div>
                   </div>
                   <div className="flex flex-col justify-between h-full rounded-md border border-gray-300">
@@ -161,7 +161,7 @@ const ResultsMenu = ({ poll }: ResultsMenu) => {
                       </div>
                       <div className="whitespace-nowrap ml-4">
                         <span>{option.percent}%</span>
-                        <span> ({option.votes} votes)</span>
+                        <span> ({option.votes} голосів)</span>
                       </div>
                     </div>
                     <div className="relative overflow-hidden rounded-lg border border-[#808080] mt-1">
@@ -203,7 +203,7 @@ const ResultsMenu = ({ poll }: ResultsMenu) => {
           )}
 
           <div className="mt-[15px] ">
-            <span>Total votes: {totalVotes}</span>
+            <span>Всього голосів: {totalVotes}</span>
           </div>
         </>
       ) : (

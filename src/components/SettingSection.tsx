@@ -9,6 +9,7 @@ interface SettingSection {
   setChecked: (checked: boolean) => void;
   classNameChildren?: string;
   label: string;
+  name?: string;
 }
 
 const SettingSection = ({
@@ -18,17 +19,14 @@ const SettingSection = ({
   label,
   className,
   classNameChildren,
+  name,
 }: SettingSection) => {
   return (
     <label htmlFor="" className={className}>
       <div className={`flex ${classNameChildren}`}>
         <span className={'mr-[40px]'}>{label}</span>
 
-        <ToggleCheckbox
-          checked={checked}
-          onChange={setChecked}
-          name="isPublic"
-        />
+        <ToggleCheckbox checked={checked} onChange={setChecked} name={name} />
       </div>
       {checked && (
         <div className={'flex h-[40px] items-center '}>

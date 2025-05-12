@@ -137,7 +137,14 @@ export const apiSlice = createApi({
     }),
     getPolls: builder.query<
       PollsResponse,
-      { filter: string; page: number; size: number; search: string }
+      {
+        filter: string;
+        page: number;
+        size: number;
+        search: string;
+        category: string;
+        sortByVotes?: 'asc' | 'desc';
+      }
     >({
       query: (params) => ({
         url: 'polls',

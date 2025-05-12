@@ -12,14 +12,17 @@ export type loginFormState =
   | undefined;
 
 export const loginFormSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
+  email: z
+    .string()
+    .email({ message: 'Будь ласка, введіть дійсну електронну адресу.' })
+    .trim(),
   password: z
     .string()
-    .min(8, { message: 'Be at least 8 characters long' })
-    .regex(/[a-zA-Z]/, { message: 'Contain at least one letter.' })
-    .regex(/[0-9]/, { message: 'Contain at least one number.' })
+    .min(8, { message: 'Має містити щонайменше 8 символів.' })
+    .regex(/[a-zA-Z]/, { message: 'Має містити щонайменше одну літеру.' })
+    .regex(/[0-9]/, { message: 'Має містити щонайменше одну цифру.' })
     .regex(/[^a-zA-Z0-9]/, {
-      message: 'Contain at least one special character.',
+      message: 'Має містити щонайменше один спеціальний символ.',
     })
     .trim(),
 });
@@ -37,20 +40,23 @@ export type signupFormState =
 
 export const signupFormState = z
   .object({
-    email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
+    email: z
+      .string()
+      .email({ message: 'Будь ласка, введіть дійсну електронну адресу.' })
+      .trim(),
     password: z
       .string()
-      .min(8, { message: 'Be at least 8 characters long' })
-      .regex(/[a-zA-Z]/, { message: 'Contain at least one letter.' })
-      .regex(/[0-9]/, { message: 'Contain at least one number.' })
+      .min(8, { message: 'Має містити щонайменше 8 символів.' })
+      .regex(/[a-zA-Z]/, { message: 'Має містити щонайменше одну літеру.' })
+      .regex(/[0-9]/, { message: 'Має містити щонайменше одну цифру.' })
       .regex(/[^a-zA-Z0-9]/, {
-        message: 'Contain at least one special character.',
+        message: 'Має містити щонайменше один спеціальний символ.',
       })
       .trim(),
     confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match.',
+    message: 'Паролі не збігаються.',
     path: ['confirmPassword'],
   });
 
@@ -63,18 +69,23 @@ export type addPollFormState =
         visibility?: string[];
         type?: string[];
         date?: string[];
+        changeVote?: string[];
+        interval?: string[];
       };
       message?: string;
     }
   | undefined;
 
-// Schema for validating image objects
 const imageSchema = z.object({
-  file: z.string().url({ message: 'Image URL is required and must be valid.' }),
+  file: z
+    .string()
+    .url({ message: 'URL зображення обов’язковий і має бути дійсним.' }),
   title: z
     .string()
-    .min(1, { message: 'Image title is required.' })
-    .max(100, { message: 'Image title must be 100 characters or less.' })
+    .min(1, { message: 'Назва зображення обов’язкова.' })
+    .max(100, {
+      message: 'Назва зображення має містити не більше 100 символів.',
+    })
     .trim(),
 });
 
@@ -82,16 +93,19 @@ export const addPollFormSchema = z
   .object({
     title: z
       .string()
-      .min(1, { message: 'Title is required.' })
-      .max(100, { message: 'Title must be 100 characters or less.' })
+      .min(1, { message: 'Назва обов’язкова.' })
+      .max(100, { message: 'Назва має містити не більше 100 символів.' })
       .trim(),
     image: z.string(),
+    changeVote: z.boolean(),
+    interval: z.string(),
     description: z
       .string()
-      .max(500, { message: 'Description must be 500 characters or less.' })
+      .max(500, { message: 'Опис має містити не більше 500 символів.' })
       .optional(),
-    type: z.enum(['multiple', 'img'], { message: 'Invalid poll type.' }),
-    visibility: z.string().min(1, { message: 'Visibility is required.' }),
+    type: z.enum(['multiple', 'img'], { message: 'Недійсний тип опитування.' }),
+    visibility: z.string().min(1, { message: 'Видимість обов’язкова.' }),
+    category: z.string(),
     date: z
       .date()
       .optional()
@@ -102,29 +116,31 @@ export const addPollFormSchema = z
           const minFutureTime = new Date(now.getTime() + 2 * 60 * 1000);
           return date >= minFutureTime;
         },
-        { message: 'Date must be at least 2 minutes in the future.' },
+        {
+          message:
+            'Дата має бути щонайменше на 2 хвилини пізніше від поточного часу.',
+        },
       ),
     options: z.union([
-      // For type: 'multiple'
       z
         .array(
           z
             .string()
-            .min(1, { message: 'Option cannot be empty.' })
-            .max(100, { message: 'Option must be 100 characters or less.' })
+            .min(1, { message: 'Варіант не може бути порожнім.' })
+            .max(100, {
+              message: 'Варіант має містити не більше 100 символів.',
+            })
             .trim(),
         )
-        .min(2, { message: 'At least two non-empty options are required.' }),
-      // For type: 'img'
+        .min(2, { message: 'Потрібно щонайменше два непорожні варіанти.' }),
+
       z
         .array(imageSchema)
-        .min(1, { message: 'At least one image with a title is required.' }),
+        .min(1, { message: 'Потрібно щонайменше одне зображення з назвою.' }),
     ]),
   })
   .superRefine((data, ctx) => {
-    // Validate options based on poll type
     if (data.type === 'multiple') {
-      // Ensure options is an array of strings
       if (
         !Array.isArray(data.options) ||
         !data.options.every((opt) => typeof opt === 'string')
@@ -133,11 +149,10 @@ export const addPollFormSchema = z
           code: z.ZodIssueCode.custom,
           path: ['options'],
           message:
-            'Options must be an array of strings for multiple choice poll.',
+            'Варіанти мають бути масивом рядків для опитування з множинним вибором.',
         });
       }
     } else if (data.type === 'img') {
-      // Ensure options is an array of objects with file (string) and title
       if (
         !Array.isArray(data.options) ||
         !data.options.every(
@@ -154,7 +169,7 @@ export const addPollFormSchema = z
           code: z.ZodIssueCode.custom,
           path: ['options'],
           message:
-            'Options must be an array of image objects with URL and title for image poll.',
+            'Варіанти мають бути масивом об’єктів із зображеннями, що містять URL і назву для опитування із зображеннями.',
         });
       }
     }

@@ -88,7 +88,7 @@ const Poll = () => {
         </div>
       </span>
       <span>
-        <h1>Make a choice</h1>
+        <h1>Зроби свій вибір</h1>
         <OptionsList
           options={data.options}
           selectedIndex={userVote}
@@ -100,7 +100,7 @@ const Poll = () => {
         />
         <div className={'flex'}>
           <MyButton
-            label={'Vote'}
+            label={'Проголосувати'}
             type={'button'}
             isLoading={voteLoading}
             onClick={async () => {
@@ -119,7 +119,7 @@ const Poll = () => {
             className={'pr-[20px] pl-[20px] mr-[20px]'}
           />
           <MyButton
-            label={'Show results'}
+            label={'Показати результати'}
             type={'button'}
             icon={results}
             onClick={() => {

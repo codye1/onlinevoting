@@ -11,12 +11,15 @@ type apiError = {
 
 export interface Poll {
   title: string;
+  category: string;
   description?: string;
   image: string;
   options: string[] | { file: string; title: string }[];
   creator: string;
   type: string;
   visibility: string;
+  changeVote: boolean;
+  interval: string;
   date?: Date;
 }
 
@@ -32,7 +35,7 @@ const addPool = async (_state: addPollFormState, formData: FormData) => {
     const optionsString = formData.get('options')?.toString() || '[]';
     try {
       options = JSON.parse(optionsString) as string[];
-    } catch (e) {
+    } catch {
       store.dispatch(setButtonLoading(false));
       return {
         errors: {
@@ -64,12 +67,16 @@ const addPool = async (_state: addPollFormState, formData: FormData) => {
       },
     };
   }
-
+  console.log(formData.get('changeVote'));
+  console.log(formData.get('interval'));
   // Validate form data
   const validatedFields = addPollFormSchema.safeParse({
     title: formData.get('title'),
     description: formData.get('description') || undefined,
+    category: formData.get('category'),
     type,
+    changeVote: formData.get('changeVote') === 'on',
+    interval: formData.get('interval') ?? '',
     visibility: formData.get('visibility'),
     image: formData.get('image'),
     options,
@@ -96,6 +103,9 @@ const addPool = async (_state: addPollFormState, formData: FormData) => {
     type: validType,
     visibility,
     date,
+    changeVote,
+    category,
+    interval,
   } = validatedFields.data;
 
   console.log('Validated data:', {
@@ -112,11 +122,14 @@ const addPool = async (_state: addPollFormState, formData: FormData) => {
       .dispatch(
         apiSlice.endpoints.addPoll.initiate({
           title,
+          category,
           description,
           options: validOptions,
           type: validType,
           visibility,
           image,
+          changeVote,
+          interval,
           date,
           creator: store.getState().auth.user.id,
         }),

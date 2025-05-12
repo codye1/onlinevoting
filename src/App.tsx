@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { authUser } from './reducer/auth.ts';
 import Header from './components/Header/Header.tsx';
 
-interface DecodedToken {
+export interface DecodedToken {
   sub: string;
   email: string;
   iat: number;

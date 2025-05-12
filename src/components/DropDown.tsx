@@ -43,7 +43,7 @@ const DropDown = ({
       {label && <h1>{label}</h1>}
       <button
         type="button"
-        className="bg-[#4B4B4B] text-white rounded-sm m-[5px] p-[10px] w-full text-left cursor-pointer flex items-center justify-between"
+        className="bg-[#4B4B4B] text-white rounded-sm  p-[10px] w-full text-left cursor-pointer flex items-center justify-between"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {selected ? (

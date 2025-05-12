@@ -18,21 +18,14 @@ interface PollsList {
 }
 
 const PollsList = ({ polls }: PollsList) => {
-  const currentDate = new Date();
   const navigate = useNavigate();
 
   return (
     <div>
-      <div className="flex justify-between items-center px-[20px] py-[10px]  font-semibold">
-        <span className="flex-1">Polls </span>
-        <span className="w-[100px] text-center">Participants</span>
-        <span className="w-[100px] text-center">Deadline</span>
-        <span className="w-[100px] text-center">Status</span>
-      </div>
-
       {polls.map((p: PollItem) => {
-        const isLive = !p.endDate || p.endDate > currentDate;
-
+        const isLive = !p.endDate || new Date(p.endDate) > new Date();
+        console.log(p.endDate);
+        console.log(p.title);
         return (
           <div
             key={p.id}

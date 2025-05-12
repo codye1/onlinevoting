@@ -1,6 +1,6 @@
 import { FormEvent, startTransition, useActionState, useState } from 'react';
 import Modal from '../../../../components/Modal.tsx';
-import TextInput, { types } from '../../../../components/TextInput.tsx';
+import TextInput from '../../../../components/TextInput.tsx';
 import TextArea from '../../../../components/TextArea.tsx';
 import MyButton from '../../../../components/MyButton.tsx';
 import img from '../../../../../public/img.svg';
@@ -13,6 +13,7 @@ import checkPool from '../../../../../public/checkPool.svg';
 import { useAppSelector } from '../../../../hooks/hooks.tsx';
 import addPoll from '../../../../actions/addPoll.ts';
 import ImageUploadInput from '../../../../components/ImageUploadInput.tsx';
+import { types } from '../../../../lib/types.ts';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -26,57 +27,33 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
   const [hideDescription, setHideDescription] = useState(true);
   const [optionsList, setOptionsList] = useState<string[]>(['', '']);
   const [closePollOnDate, setClosePollOnDate] = useState<boolean>(false);
+  const [changeVoteOpen, setChangeVoteOpen] = useState(false);
   const [date, setDate] = useState<Value>(new Date());
   const [state, action] = useActionState(addPoll, undefined);
   const [typePoll, setTypePoll] = useState('multiple');
   const [modalUploadImageOpen, setModalUploadImageOpen] = useState(false);
   const [image, setImage] = useState<string | undefined>();
+
   const [uploadedImages, setUploadedImages] = useState<
     { file: string; title: string }[]
   >([]);
   const isLoading = useAppSelector((state) => state.general.buttonLoading);
 
   const options = [
-    { label: 'Multiple choice', value: 'multiple', icon: checkPool },
-    { label: 'Img pool', value: 'img', icon: img },
+    { label: 'Кілька варіантів вибору', value: 'multiple', icon: checkPool },
+    { label: 'Голосування за зображеннями', value: 'img', icon: img },
   ];
 
   const visibilityOptions = [
-    { label: 'Always public', value: 'always' },
-    { label: 'Public after vote', value: 'vote' },
-    { label: 'Public after end date', value: 'date' },
+    { label: 'Завжди відкриті', value: 'always' },
+    { label: 'Відкриті після голосу', value: 'vote' },
+    { label: 'Відкриті після закінчення терміну дії', value: 'date' },
   ];
 
-  const addOption = () => {
-    setOptionsList((prev) => [...prev, '']);
-  };
-
-  const removeOption = (index: number) => {
-    setOptionsList((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const updateOption = (index: number, value: string) => {
-    const updatedOptions = [...optionsList];
-    updatedOptions[index] = value;
-    setOptionsList(updatedOptions);
-  };
-
-  const handleImagesChange = (images: string[]) => {
-    // Convert new images to objects with empty titles and append to existing images
-    const newImages = images.map((file) => ({ file, title: '' }));
-    setUploadedImages((prev) => [...prev, ...newImages]); // Append instead of replace
-  };
-
   const handleImageTitleChange = (index: number, title: string) => {
-    // Update the title for the image at the given index
     setUploadedImages((prev) =>
       prev.map((item, i) => (i === index ? { ...item, title } : item)),
     );
-  };
-
-  const removeImage = (index: number) => {
-    // Remove the image (and its title) at the given index
-    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -86,7 +63,6 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
     if (closePollOnDate && date instanceof Date) {
       formData.set('date', date.toISOString());
     }
-    // Append uploaded images and their titles to form data
     uploadedImages.forEach((item, index) => {
       formData.append(`image-${index}`, item.file);
       formData.append(`image-title-${index}`, item.title);
@@ -190,14 +166,20 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                     trackValue={{
                       value: option,
                       onChange: (e) => {
-                        updateOption(index, e.target.value);
+                        const updatedOptions = [...optionsList];
+                        updatedOptions[index] = e.target.value;
+                        setOptionsList(updatedOptions);
                       },
                     }}
                     button={
                       optionsList.length > 1
                         ? {
                             icon: close,
-                            onClick: () => removeOption(index),
+                            onClick: () => {
+                              setOptionsList((prev) =>
+                                prev.filter((_, i) => i !== index),
+                              );
+                            },
                           }
                         : undefined
                     }
@@ -207,7 +189,13 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                 <div className="mt-4 grid grid-cols-3 gap-2">
                   <ImageUploadInput
                     name={'image'}
-                    onImagesChange={handleImagesChange}
+                    onImagesChange={(images) => {
+                      const newImages = images.map((file) => ({
+                        file,
+                        title: '',
+                      }));
+                      setUploadedImages((prev) => [...prev, ...newImages]);
+                    }}
                   />
                   {uploadedImages.length > 0 &&
                     uploadedImages.map((item, index) => (
@@ -230,7 +218,11 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                         />
                         <button
                           type="button"
-                          onClick={() => removeImage(index)}
+                          onClick={() =>
+                            setUploadedImages((prev) =>
+                              prev.filter((_, i) => i !== index),
+                            )
+                          }
                           className="absolute right-0 top-0  cursor-pointer"
                         >
                           <img
@@ -274,7 +266,9 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                   label={'Добавити варіант'}
                   type={'button'}
                   icon={plus}
-                  onClick={addOption}
+                  onClick={() => {
+                    setOptionsList((prev) => [...prev, '']);
+                  }}
                 />
               )}
             </menu>
@@ -303,9 +297,76 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                   </p>
                 )}
               </SettingSection>
+              <SettingSection
+                label={'Зміна вибору'}
+                checked={changeVoteOpen}
+                setChecked={setChangeVoteOpen}
+                name={'changeVote'}
+                classNameChildren={'p-[5px]'}
+              >
+                <DropDown
+                  options={[
+                    { label: 'Без інтервалу', value: 'noInterval' },
+                    {
+                      label: 'Раз в хвилину',
+                      value: 'perMinute',
+                    },
+                    {
+                      label: 'Раз в годину',
+                      value: 'perHour',
+                    },
+                    {
+                      label: 'Раз в день',
+                      value: 'perDay',
+                    },
+                    {
+                      label: 'Раз в тиждень',
+                      value: 'perWeek',
+                    },
+                    {
+                      label: 'Раз в місяць',
+                      value: 'perMonth',
+                    },
+                  ]}
+                  onSelect={() => {}}
+                  name={'interval'}
+                />
+              </SettingSection>
               <DropDown
+                label={'Результати'}
                 name={'visibility'}
                 options={visibilityOptions}
+                onSelect={() => {}}
+              />
+              <DropDown
+                label={'Категорія'}
+                options={[
+                  { label: 'Без категорії', value: '' },
+                  { label: 'Кіно та серіали', value: 'Кіно та серіали' },
+                  { label: 'Музика', value: 'Музика' },
+                  { label: 'Спорт', value: 'Спорт' },
+                  { label: 'Технології', value: 'Технології' },
+                  { label: 'Мода', value: 'Мода' },
+                  { label: 'Кулінарія', value: 'Кулінарія' },
+                  { label: 'Подорожі', value: 'Подорожі' },
+                  { label: 'Книги', value: 'Книги' },
+                  { label: 'Ігри', value: 'Ігри' },
+                  { label: 'Політика', value: 'Політика' },
+                  { label: 'Освіта', value: 'Освіта' },
+                  { label: 'Наука', value: 'Наука' },
+                  { label: 'Мистецтво', value: 'Мистецтво' },
+                  { label: 'Здоров’я та фітнес', value: 'Здоров’я та фітнес' },
+                  { label: 'Автомобілі', value: 'Автомобілі' },
+                  { label: 'Домашні улюбленці', value: 'Домашні улюбленці' },
+                  { label: 'Екологія', value: 'Екологія' },
+                  {
+                    label: 'Фінанси та інвестиції',
+                    value: 'Фінанси та інвестиції',
+                  },
+                  { label: 'Стартапи та бізнес', value: 'Стартапи та бізнес' },
+                  { label: 'Соціальні питання', value: 'Соціальні питання' },
+                ]}
+                name={'category'}
                 onSelect={() => {}}
               />
             </div>
