@@ -89,7 +89,7 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                 <TextArea
                   name={'description'}
                   placeholder={'Введіть опис'}
-                  label={'Description'}
+                  label={'Опис'}
                   errors={state?.errors?.description}
                 />
                 <div className={'flex justify-between p-[5px] flex-col'}>
@@ -98,7 +98,7 @@ const AddPollModal = ({ open, setOpen }: AddPollModal) => {
                   ) : (
                     <MyButton
                       icon={img}
-                      label={'Add image'}
+                      label={'Додати фото'}
                       type={'button'}
                       onClick={() => {
                         setModalUploadImageOpen(true);

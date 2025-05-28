@@ -65,8 +65,8 @@ const ResultsMenu = ({ poll }: ResultsMenu) => {
       };
     },
   );
-
-  const hasImages = poll.type === 'image';
+  console.log(poll.type);
+  const hasImages = poll.type === 'img';
 
   useEffect(() => {
     if (!hasImages && chartRef.current) {

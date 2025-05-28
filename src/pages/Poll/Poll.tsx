@@ -50,11 +50,11 @@ const Poll = () => {
     useVoteMutation();
 
   if (isLoading) {
-    return <div>Loading poll...</div>;
+    return <div>Загрузка опитування...</div>;
   }
 
   if (error || !id || !data) {
-    return <div>Error loading poll or invalid poll ID</div>;
+    return <div>Помилка загрузки опитування</div>;
   }
 
   if (userVote === null && data.userVote !== null) {
