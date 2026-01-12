@@ -1,6 +1,6 @@
 // Modal.tsx
 
-import closeIcon from '../../public/close.svg';
+import closeIcon from '../public/close.svg';
 import { ReactNode } from 'react';
 
 interface ModalProps {

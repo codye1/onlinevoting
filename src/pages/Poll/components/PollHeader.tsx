@@ -1,4 +1,4 @@
-import { formatTimeAgo } from '../../../lib/formatTimeAgo.ts';
+import { formatTimeAgo } from '@utils/formatTimeAgo.ts';
 
 interface PollHeader {
   title: string;

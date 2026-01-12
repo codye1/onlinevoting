@@ -23,6 +23,22 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+
+      // Let eslint --fix remove unused imports automatically.
+      'unused-imports/no-unused-imports': 'error',
+      // Replace default unused-vars rules to avoid duplicate reports.
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+        },
+      ],
+
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },

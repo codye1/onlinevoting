@@ -1,11 +1,11 @@
 import { ChangeEvent } from 'react';
-import { types } from '../lib/types.ts';
+import { inputTypes } from '@utils/types.ts';
 
 interface TextInput {
   label?: string;
   name: string;
   placeholder: string;
-  type: types;
+  type: inputTypes;
   classNameInput?: string;
   trackValue?: {
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -52,7 +52,7 @@ const TextInput = ({
         )}
       </div>
       {errors && (
-        <ul className="text-start text-sm text-red-500 text-xs">
+        <ul className="text-start text-red-500 text-xs">
           {errors.map((error) => (
             <li key={error}>{error}</li>
           ))}

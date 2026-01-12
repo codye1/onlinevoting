@@ -1,7 +1,7 @@
 import { ChangeEvent, DragEvent, useState } from 'react';
 import { useUploadImagesToImgBBMutation } from '../reducer/api.ts';
 import Spiner from './Spiner.tsx';
-import plus from '../../public/plus.svg';
+import plus from '../public/plus.svg';
 
 type ImageUploadInputProps = {
   name: string;

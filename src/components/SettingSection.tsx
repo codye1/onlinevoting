@@ -1,6 +1,6 @@
 import ToggleCheckbox from './ToggleCheckbox.tsx';
 import { ReactNode } from 'react';
-import pointer from '../../public/pointer.svg';
+import pointer from '../public/pointer.svg';
 
 interface SettingSection {
   children: ReactNode;

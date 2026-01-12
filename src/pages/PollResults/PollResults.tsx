@@ -1,12 +1,12 @@
 import PollHeader from '../Poll/components/PollHeader.tsx';
-import errorIcon from '../../../public/error.svg';
+import errorIcon from '@public/error.svg';
 import { useNavigate, useParams } from 'react-router-dom';
-import MyButton from '../../components/MyButton.tsx';
-import arrowLeft from '../../../public/arrowLeft.svg';
-import refresh from '../../../public/refresh.svg';
+import MyButton from '@components/MyButton.tsx';
+import arrowLeft from '@public/arrowLeft.svg';
+import refresh from '@public/refresh.svg';
 import ResultsMenu from './components/ResultsMenu.tsx';
 import { useGetPollResultsQuery } from '../../reducer/api.ts';
-import getErrorMessage from '../../lib/getErrorMessage.ts';
+import getErrorMessage from '../../utils/getErrorMessage.ts';
 
 const PollResults = () => {
   const navigate = useNavigate();
@@ -27,6 +27,13 @@ const PollResults = () => {
 
   return (
     <div className="bg-[rgba(255,255,255,0.25)] rounded p-[20px] max-w-[765px] m-auto">
+      <button
+        onClick={() => {
+          console.log(poll);
+        }}
+      >
+        ff
+      </button>
       {isLoading ? (
         <div>Loading...</div>
       ) : error ? (
@@ -46,9 +53,9 @@ const PollResults = () => {
         poll && (
           <>
             <PollHeader
-              creator={poll.creator}
+              creator={poll.creatorEmail}
               title={poll.title}
-              startDate={poll.startDate}
+              startDate={poll.createdAt}
             />
             <ResultsMenu poll={poll} />
             <div className="flex mt-4">
