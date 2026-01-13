@@ -1,29 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
-
-interface PollOption {
-  title: string;
-  votes: number;
-}
-
-interface ImageOption extends PollOption {
-  file: string;
-}
-
-interface VoteOption extends PollOption {
-  file?: never;
-}
-
-interface ResultsMenu {
-  poll: {
-    id: string;
-    creator: string;
-    title: string;
-    type: string;
-    startDate: string;
-    options: ImageOption[] | VoteOption[];
-  };
-}
+import { PollResultsResponse } from '../../../reducer/api';
 
 interface EnhancedOption {
   title: string;
@@ -31,8 +8,12 @@ interface EnhancedOption {
   percent: string;
   percentValue: number;
   color: string;
-  file?: string;
+  file: string | null;
 }
+
+type IResultsMenu = {
+  poll: PollResultsResponse;
+};
 
 const colors = [
   '#3EB991',
@@ -44,7 +25,7 @@ const colors = [
   '#3EB991',
 ];
 
-const ResultsMenu = ({ poll }: ResultsMenu) => {
+const ResultsMenu = ({ poll }: IResultsMenu) => {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
   const totalVotes = poll.options.reduce(
@@ -61,7 +42,7 @@ const ResultsMenu = ({ poll }: ResultsMenu) => {
         percent: percent.toFixed(2),
         percentValue: percent,
         color: colors[index % colors.length],
-        file: 'file' in option ? option.file : undefined,
+        file: option.file,
       };
     },
   );

@@ -1,9 +1,9 @@
-import TextInput from '../../../../components/TextInput.tsx';
-import MyButton from '../../../../components/MyButton.tsx';
+import TextInput from '@components/TextInput.tsx';
+import MyButton from '@components/MyButton.tsx';
 import { FormEvent, startTransition, useActionState } from 'react';
-import signup from '../../../../actions/signup.ts';
-import { useAppSelector } from '../../../../hooks/hooks.tsx';
-import { types } from '../../../../lib/types.ts';
+import signup from '@actions/signup.ts';
+import { useAppSelector } from '@hooks/hooks.tsx';
+import { inputTypes } from '@utils/types.ts';
 
 interface SignupForm {
   onHaveAccount: () => void;
@@ -30,23 +30,23 @@ const Signup = ({ onHaveAccount }: SignupForm) => {
       <h1 className={'text-2xl'}>Signup</h1>
       <TextInput
         placeholder={'email@example.com'}
-        type={types.email}
+        type={inputTypes.email}
         name={'email'}
         errors={state?.errors.email}
       />
       <TextInput
-        placeholder={'password'}
-        type={types.password}
+        placeholder={'Пароль'}
+        type={inputTypes.password}
         name={'password'}
         errors={state?.errors.password}
       />
       <TextInput
-        placeholder={'confirm password'}
-        type={types.password}
+        placeholder={'Пароль ще раз'}
+        type={inputTypes.password}
         name={'confirmPassword'}
         errors={state?.errors.confirmPassword}
       />
-      <p className={'text-start text-sm text-red-500 text-sm font-light'}>
+      <p className={'text-start text-sm text-red-500 font-light'}>
         {state?.errors.auth}
       </p>
       <MyButton

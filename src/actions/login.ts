@@ -1,4 +1,4 @@
-import { loginFormSchema, loginFormState } from '../lib/definitions.ts';
+import { loginFormSchema, loginFormState } from '@utils/definitions.ts';
 import { store } from '../reducer/store.ts';
 import { apiSlice } from '../reducer/api.ts';
 import { authUser, setAuthLoading } from '../reducer/auth.ts';
@@ -41,7 +41,7 @@ const login = async (_state: loginFormState, formData: FormData) => {
     console.log('Успішний вхід:', result);
     const decoded = jwtDecode<DecodedToken>(result.accessToken);
     store.dispatch(setAuthLoading(false));
-    store.dispatch(authUser({ id: decoded.sub, email }));
+    store.dispatch(authUser({ id: decoded.userId, email }));
   } catch (error) {
     if (typeof error === 'object' && error !== null && 'data' in error) {
       const err = error as apiError;

@@ -1,7 +1,10 @@
 import { useLocation } from 'react-router-dom';
+import { useLogoutMutation } from '../../reducer/api';
 
 const Header = () => {
   const location = useLocation();
+
+  const [logout] = useLogoutMutation();
 
   return (
     <header className="flex justify-end h-[50px] items-center text-2xl">
@@ -11,6 +14,7 @@ const Header = () => {
       >
         Home
       </a>
+      <button onClick={async () => await logout()}>Logout</button>
     </header>
   );
 };

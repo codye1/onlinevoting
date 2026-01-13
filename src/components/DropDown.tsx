@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import check from '../../public/check.svg';
-import dropDown from '../../public/dropDown.svg';
+import check from '@public/check.svg';
+import dropDown from '@public/dropDown.svg';
 
 type Option = {
   label: string;
-  value: string;
+  value: string | number;
   icon?: string;
 };
 
@@ -13,7 +13,7 @@ type DropDown = {
   onSelect: (value: string) => void;
   placeholder?: string;
   className?: string;
-  value?: string;
+  value?: string | number;
   name: string;
   label?: string;
 };
@@ -34,7 +34,7 @@ const DropDown = ({
 
   const handleSelect = (option: Option) => {
     setSelected(option);
-    onSelect(option.value);
+    onSelect(String(option.value));
     setIsOpen(false);
   };
 
@@ -64,7 +64,7 @@ const DropDown = ({
       </button>
 
       {isOpen && (
-        <ul className="absolute z-10 bg-[#4B4B4B] border border-gray-600 rounded-sm mt-[-2px] w-full max-h-60 overflow-y-auto shadow-lg mt-[5px] overflow-x-hidden overflow-y-auto no-scrollbar">
+        <ul className="absolute z-10 bg-[#4B4B4B] border border-gray-600 rounded-sm mt-[-2px] w-full max-h-60 overflow-y-auto overflow-x-hidden shadow-lg no-scrollbar">
           {options.map((option) => (
             <li
               key={option.value}

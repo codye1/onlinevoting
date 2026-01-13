@@ -1,42 +1,19 @@
-import description from '../../../public/description.svg';
+import description from '@public/description.svg';
 import OptionsList from './components/OptionsList.tsx';
-import MyButton from '../../components/MyButton.tsx';
-import arrow from '../../../public/arrow.svg';
-import results from '../../../public/results.svg';
+import MyButton from '@components/MyButton.tsx';
+import arrow from '@public/arrow.svg';
+import results from '@public/results.svg';
 import PollHeader from './components/PollHeader.tsx';
-import { useAppSelector } from '../../hooks/hooks.tsx';
 import { useState } from 'react';
 import { useGetPollQuery, useVoteMutation } from '../../reducer/api.ts';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-interface ImageOption {
-  file: string | null;
-  title: string;
-}
-
-interface Poll {
-  id: string;
-  creator: string;
-  title: string;
-  image: string | null;
-  description: string;
-  visibility: string;
-  type: string;
-  startDate: string;
-  endDate: string | null;
-  userVote: number | null;
-  options: ImageOption[];
-}
-
 export interface Vote {
+  optionId: string;
   pollId: string;
-  userId: string;
-  indexChoice: number;
-  voteDate: Date;
 }
 
 const Poll = () => {
-  const userId = useAppSelector((state) => state.auth.user.id);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,7 +22,7 @@ const Poll = () => {
     { skip: !id },
   );
 
-  const [userVote, setUserVote] = useState<number | null>(null);
+  const [userVote, setUserVote] = useState<string | null>(null);
   const [vote, { error: voteError, isLoading: voteLoading }] =
     useVoteMutation();
 
@@ -58,7 +35,7 @@ const Poll = () => {
   }
 
   if (userVote === null && data.userVote !== null) {
-    setUserVote(data.userVote);
+    setUserVote(data.userVote.id);
   }
   console.log(data);
   return (
@@ -69,8 +46,8 @@ const Poll = () => {
     >
       <PollHeader
         title={data.title}
-        creator={data.creator}
-        startDate={data.startDate}
+        creator={data.creator?.email || 'Анонім'}
+        startDate={data.createdAt}
       />
       <span className={'mt-[20px] flex font-normal'}>
         {data.description && (
@@ -91,11 +68,11 @@ const Poll = () => {
         <h1>Зроби свій вибір</h1>
         <OptionsList
           options={data.options}
-          selectedIndex={userVote}
+          selectedOptionId={userVote ? userVote : ''}
           error={voteError}
-          handleOptionChange={(index) => {
-            console.log(index);
-            setUserVote(index);
+          pollType={data.type}
+          handleOptionChange={(optionId) => {
+            setUserVote(optionId);
           }}
         />
         <div className={'flex'}>
@@ -107,10 +84,8 @@ const Poll = () => {
               if (userVote !== null) {
                 console.log(userVote);
                 await vote({
-                  pollId: data.id,
-                  userId,
-                  indexChoice: userVote,
-                  voteDate: new Date(),
+                  optionId: userVote,
+                  pollId: id!,
                 });
               }
             }}

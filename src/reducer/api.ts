@@ -5,33 +5,31 @@ import type {
   FetchArgs,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query';
-import { Poll } from '../actions/addPoll.ts';
-import { Vote } from '../pages/Poll/Poll.tsx';
-import { PollItem } from '../components/PollsList.tsx';
 
-interface PollResponse {
+import { Vote } from '../pages/Poll/Poll.tsx';
+import { PollItem } from '@components/PollsList.tsx';
+import { Poll, PollOption } from '../utils/types.ts';
+import { AddPoll } from '../actions/addPoll.ts';
+import { QueryParams } from 'src/pages/Home/Home.tsx';
+
+interface PollResponse extends Poll {
   id: string;
-  creator: string;
-  title: string;
-  image: string;
-  description: string;
-  visibility: string;
-  type: string;
-  startDate: string;
-  endDate: string;
-  userVote: number;
-  options: { file: string; title: string }[] | string[];
+  createdAt: string;
+  userVote: PollOption | null;
 }
 
-interface PollResultsResponse {
+interface PollResultsOption extends PollOption {
+  votes: number;
+}
+
+export interface PollResultsResponse {
   id: string;
-  creator: string;
+  creatorEmail: string;
   title: string;
   type: string;
-  startDate: string;
-  options:
-    | { title: string; file: string; votes: number }[]
-    | { title: string; votes: number }[];
+  createdAt: string;
+
+  options: PollResultsOption[];
 }
 
 export interface Pagination {
@@ -41,9 +39,10 @@ export interface Pagination {
   currentPage: number;
 }
 
-export interface PollsResponse {
-  pagination: Pagination;
-  polls: PollItem[];
+export interface PollsResponse<T> {
+  polls: T[];
+  nextCursor: string | null;
+  hasMore: boolean;
 }
 
 interface AuthResponce {
@@ -60,13 +59,16 @@ interface ImgBBResponse {
 
 // ImgBB API key (replace with your actual key)
 const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://localhost:8080/',
+  baseUrl: API_BASE_URL,
   prepareHeaders: (headers) => {
-    headers.set('Authorization', `Bearer ${localStorage.getItem('token')}`);
-    console.log(localStorage.getItem('token'));
-    console.log(headers.get('Authorization'));
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
     return headers;
   },
   credentials: 'include',
@@ -78,14 +80,32 @@ const baseQueryWithReauth: BaseQueryFn<
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
-  console.log(result);
-  if (result.error && result.error.status === 'PARSING_ERROR') {
-    const refreshResult = await baseQuery('refresh', api, extraOptions);
+
+  const error = result.error;
+  const isUnauthorized =
+    !!error &&
+    ((typeof error.status === 'number' &&
+      (error.status === 401 || error.status === 403)) ||
+      (error.status === 'PARSING_ERROR' &&
+        (error as unknown as { originalStatus?: number }).originalStatus ===
+          401));
+
+  if (isUnauthorized) {
+    const refreshResult = await baseQuery(
+      {
+        url: 'refresh',
+        method: 'POST',
+      },
+      api,
+      extraOptions,
+    );
+
     if (refreshResult.data) {
-      console.log(refreshResult.data);
-      const data: AuthResponce = JSON.parse(JSON.stringify(refreshResult.data));
+      const data = refreshResult.data as AuthResponce;
       localStorage.setItem('token', data.accessToken);
       result = await baseQuery(args, api, extraOptions);
+    } else {
+      localStorage.removeItem('token');
     }
   }
   return result;
@@ -105,25 +125,31 @@ export const apiSlice = createApi({
     }),
     login: builder.mutation<AuthResponce, { email: string; password: string }>({
       query: (user) => ({
-        url: 'auth/login',
+        url: 'login',
         method: 'POST',
-        params: { email: user.email, password: user.password },
+        body: { ...user },
       }),
     }),
     signup: builder.mutation<AuthResponce, { email: string; password: string }>(
       {
         query: (user) => ({
-          url: 'auth/register',
+          url: 'register',
           method: 'POST',
           body: { ...user },
         }),
       },
     ),
-    addPoll: builder.mutation<AuthResponce, Poll>({
+    addPoll: builder.mutation<AuthResponce, AddPoll>({
       query: (poll) => ({
         url: 'polls',
         method: 'POST',
         body: { ...poll },
+      }),
+    }),
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: 'logout',
+        method: 'POST',
       }),
     }),
     getPoll: builder.query<PollResponse, { pollId: string }>({
@@ -135,32 +161,29 @@ export const apiSlice = createApi({
       transformResponse: (response: { poll: PollResultsResponse }) =>
         response.poll,
     }),
-    getPolls: builder.query<
-      PollsResponse,
-      {
-        filter: string;
-        page: number;
-        size: number;
-        search: string;
-        category: string;
-        sortByVotes?: 'asc' | 'desc';
-      }
-    >({
+    getPolls: builder.query<PollsResponse<PollItem>, QueryParams>({
       query: (params) => ({
         url: 'polls',
         method: 'GET',
-        params: { ...params },
+        params,
       }),
+      serializeQueryArgs: ({ endpointName }) => endpointName,
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg?.cursor !== previousArg?.cursor;
+      },
     }),
     vote: builder.mutation<AuthResponce, Vote>({
       query: (vote) => ({
-        url: 'votes',
+        url: `/polls/${vote.pollId}/votes`,
         method: 'POST',
         body: { ...vote },
       }),
     }),
-    refresh: builder.query<AuthResponce, void>({
-      query: () => 'auth/refresh',
+    refresh: builder.mutation<AuthResponce, void>({
+      query: () => ({
+        url: 'refresh',
+        method: 'POST',
+      }),
     }),
     uploadImagesToImgBB: builder.mutation<string[], File[]>({
       queryFn: async (files: File[], _api, _extraOptions) => {
@@ -222,6 +245,7 @@ export const {
   useGetPollQuery,
   useGetPollsQuery,
   useVoteMutation,
-  useRefreshQuery,
+  useRefreshMutation,
   useUploadImagesToImgBBMutation,
+  useLogoutMutation,
 } = apiSlice;

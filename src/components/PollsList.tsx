@@ -1,15 +1,15 @@
-import multiple from '../../public/iconMultiple.svg';
-import img from '../../public/iconImg.svg';
-import formatDate from '../lib/formatDate.ts';
+import multiple from '@public/iconMultiple.svg';
+import img from '@public/iconImg.svg';
+import formatDate from '@utils/formatDate.ts';
 import { useNavigate } from 'react-router-dom';
 
 export interface PollItem {
   id: string;
   title: string;
-  visibility: string;
+  resultsVisibility: string;
   type: string;
-  startDate: Date;
-  endDate: Date | undefined;
+  createdAt: Date;
+  expiresAt: Date | undefined;
   votes: number;
 }
 
@@ -23,9 +23,7 @@ const PollsList = ({ polls }: PollsList) => {
   return (
     <div>
       {polls.map((p: PollItem) => {
-        const isLive = !p.endDate || new Date(p.endDate) > new Date();
-        console.log(p.endDate);
-        console.log(p.title);
+        const isLive = !p.expiresAt || new Date(p.expiresAt) > new Date();
         return (
           <div
             key={p.id}
@@ -43,7 +41,7 @@ const PollsList = ({ polls }: PollsList) => {
               <span className="flex flex-col">
                 <h1>{p.title}</h1>
                 <h2 className="opacity-50">
-                  {new Date(p.startDate).toLocaleDateString()}
+                  {new Date(p.createdAt).toLocaleDateString()}
                 </h2>
               </span>
             </div>
@@ -51,7 +49,7 @@ const PollsList = ({ polls }: PollsList) => {
             <div className="flex items-center">
               <span className="w-[100px] text-center">{p.votes}</span>
               <span className="w-[100px] text-center">
-                {p.endDate ? formatDate(p.endDate) : '-'}
+                {p.expiresAt ? formatDate(p.expiresAt) : '-'}
               </span>
               <span className="w-[100px] text-center flex items-center justify-center">
                 <span

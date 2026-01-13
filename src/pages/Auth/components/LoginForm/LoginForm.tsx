@@ -1,9 +1,9 @@
-import MyButton from '../../../../components/MyButton.tsx';
-import login from '../../../../actions/login.ts';
+import MyButton from '@components/MyButton.tsx';
+import login from '@actions/login.ts';
 import { FormEvent, startTransition, useActionState } from 'react';
-import { useAppSelector } from '../../../../hooks/hooks.tsx';
-import TextInput from '../../../../components/TextInput.tsx';
-import { types } from '../../../../lib/types.ts';
+import { useAppSelector } from '@hooks/hooks.tsx';
+import TextInput from '@components/TextInput.tsx';
+import { inputTypes } from '@utils/types.ts';
 
 interface LoginForm {
   onHaveAccount: () => void;
@@ -33,16 +33,16 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
       <TextInput
         name={'email'}
         placeholder={'email@example.com'}
-        type={types.email}
+        type={inputTypes.email}
         errors={state?.errors.email}
       />
       <TextInput
         name={'password'}
-        placeholder={'password'}
-        type={types.password}
+        placeholder={'Пароль'}
+        type={inputTypes.password}
         errors={state?.errors.password}
       />
-      <p className={'text-start text-sm text-red-500 text-sm font-light'}>
+      <p className={'text-start text-red-500 text-sm font-light'}>
         {state?.errors.auth}
       </p>
       <MyButton type={'submit'} label={'Вхід'} isLoading={isLoading} />
