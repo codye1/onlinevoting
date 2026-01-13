@@ -7,23 +7,19 @@ import AddPollModal from '../.././components/HomeHeader/components/AddPoolModal/
 import { ChangeEvent, Dispatch, useState } from 'react';
 import { QueryParams } from '../../Home.tsx';
 import { Category, inputTypes } from '@utils/types.ts';
-import { BaseQueryFn, FetchArgs, FetchBaseQueryError, QueryActionCreatorResult, QueryDefinition } from '@reduxjs/toolkit/query';
-import { PollsResponse } from 'src/reducer/api.ts';
 
 interface IHomeHeader {
   queryParams: QueryParams;
   setQueryParams: Dispatch<React.SetStateAction<QueryParams>>;
-  refetch: () => QueryActionCreatorResult<QueryDefinition<{
-    filter: string;
-    pageSize: number;
-    search: string;
-    category: string;
-    sortByVotes?: "asc" | "desc";
-}, BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>, never, PollsResponse, "api">>;
+  onPollCreated: () => void;
 }
 
-const HomeHeader = ({queryParams, setQueryParams, refetch}: IHomeHeader) => {
-    const [openModal, setOpenModal] = useState(false);
+const HomeHeader = ({
+  queryParams,
+  setQueryParams,
+  onPollCreated,
+}: IHomeHeader) => {
+  const [openModal, setOpenModal] = useState(false);
 
   const handleFilterChange = (value: string) => {
     setQueryParams((prev) => ({
@@ -46,55 +42,54 @@ const HomeHeader = ({queryParams, setQueryParams, refetch}: IHomeHeader) => {
     }));
   };
 
-
   return (
-     <div className={'border-b pb-[20px] flex justify-between'}>
-        <span className={'flex items-center'}>
-          <img className={'w-[25px] h-[25px]'} src={iconFilter} alt="" />
-          <DropDown
-            options={filterOptions}
-            onSelect={handleFilterChange}
-            className={'pr-[30px]'}
-            name={'filter'}
-          />
-          <DropDown
-            options={[{ label: "Усі", value: Category.ALL }, ...categoryOptions]}
-            name={'category'}
-            className={'mr-[20px]'}
-            onSelect={handleCategoryChange}
-          />
-          <TextInput
-            name={'search'}
-            placeholder={'Пошук'}
-            classNameInput={'p-[10px]'}
-            type={inputTypes.text}
-            trackValue={{
-              onChange: handleSearchChange,
-              value: queryParams.search,
-            }}
-          />
-        </span>
-        <p
-          onClick={() => setOpenModal(true)}
-          className={
-            'ml-auto flex items-center justify-center text-center cursor-pointer'
-          }
-        >
-          <img className={'w-[15px] h-[15px] mr-[5px]'} src={plus} alt="" />
-          Створити опитування
-        </p>
+    <div className={'border-b pb-[20px] flex justify-between'}>
+      <span className={'flex items-center'}>
+        <img className={'w-[25px] h-[25px]'} src={iconFilter} alt="" />
+        <DropDown
+          options={filterOptions}
+          onSelect={handleFilterChange}
+          className={'pr-[30px]'}
+          name={'filter'}
+        />
+        <DropDown
+          options={[{ label: 'Усі', value: Category.ALL }, ...categoryOptions]}
+          name={'category'}
+          className={'mr-[20px]'}
+          onSelect={handleCategoryChange}
+        />
+        <TextInput
+          name={'search'}
+          placeholder={'Пошук'}
+          classNameInput={'p-[10px]'}
+          type={inputTypes.text}
+          trackValue={{
+            onChange: handleSearchChange,
+            value: queryParams.search,
+          }}
+        />
+      </span>
+      <p
+        onClick={() => setOpenModal(true)}
+        className={
+          'ml-auto flex items-center justify-center text-center cursor-pointer'
+        }
+      >
+        <img className={'w-[15px] h-[15px] mr-[5px]'} src={plus} alt="" />
+        Створити опитування
+      </p>
 
-        {openModal && (
-          <AddPollModal
-            handleClose={async (reason) => {
-              setOpenModal(false);
-              if (reason === 'created') {
-                await refetch();
-              }
-            }}
-          />
-        )}
-      </div>
+      {openModal && (
+        <AddPollModal
+          handleClose={async (reason) => {
+            setOpenModal(false);
+            if (reason === 'created') {
+              onPollCreated();
+            }
+          }}
+        />
+      )}
+    </div>
   );
 };
 

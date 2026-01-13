@@ -46,7 +46,7 @@ const Poll = () => {
     >
       <PollHeader
         title={data.title}
-        creator={data.creator}
+        creator={data.creator?.email || 'Анонім'}
         startDate={data.createdAt}
       />
       <span className={'mt-[20px] flex font-normal'}>

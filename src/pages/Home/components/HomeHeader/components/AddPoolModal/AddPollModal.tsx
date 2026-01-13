@@ -12,18 +12,27 @@ import Settings from './components/Settings/Settings.tsx';
 type ValuePiece = Date | null;
 export type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-interface AddPollModal {
+type AddPollErrors = Partial<
+  Record<'title' | 'description' | 'options' | 'date', string[]>
+>;
+
+type AddPollState =
+  | {
+      errors?: AddPollErrors;
+    }
+  | undefined;
+
+interface IAddPollModal {
   handleClose: (reason: 'created' | 'closed') => void;
 }
 
-const AddPollModal = ({ handleClose }: AddPollModal) => {
+const AddPollModal = ({ handleClose }: IAddPollModal) => {
   const [closePollOnDate, setClosePollOnDate] = useState<boolean>(false);
-  const [date, setDate] = useState<Value>(new Date());
-  const [isLoading, setIsLoading] = useState(false);
-  const [state, action] = useActionState(
+  const [expireAtDate, setExpireAtDate] = useState<Value>(new Date());
+  const [state, action, isPending] = useActionState<AddPollState, FormData>(
     addPoll(() => {
       handleClose('created');
-    }, setIsLoading),
+    }),
     undefined,
   );
 
@@ -37,10 +46,10 @@ const AddPollModal = ({ handleClose }: AddPollModal) => {
     const formData = new FormData(event.currentTarget);
     formData.set('closePollOnDate', closePollOnDate.toString());
 
-
-    if (closePollOnDate && date instanceof Date) {
-      formData.set('date', date.toISOString());
+    if (closePollOnDate && expireAtDate instanceof Date) {
+      formData.set('expireAtDate', expireAtDate.toISOString());
     }
+
     uploadedImages.forEach((item, index) => {
       formData.append(`image-${index}`, item.file);
       formData.append(`image-title-${index}`, item.title);
@@ -74,8 +83,8 @@ const AddPollModal = ({ handleClose }: AddPollModal) => {
         <Settings
           setClosePollOnDate={setClosePollOnDate}
           closePollOnDate={closePollOnDate}
-          setDate={setDate}
-          date={date}
+          setExpireAtDate={setExpireAtDate}
+          expireAtDate={expireAtDate}
           errors={state?.errors?.date}
         />
 
@@ -83,7 +92,7 @@ const AddPollModal = ({ handleClose }: AddPollModal) => {
           className={'ml-auto'}
           type={'submit'}
           label={'Створити голосування'}
-          isLoading={isLoading}
+          isLoading={isPending}
         />
       </form>
     </Modal>

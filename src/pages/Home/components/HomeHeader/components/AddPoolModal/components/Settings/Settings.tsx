@@ -13,16 +13,16 @@ import { Value } from '../../AddPollModal.tsx';
 interface ISettings {
   setClosePollOnDate: Dispatch<React.SetStateAction<boolean>>;
   closePollOnDate: boolean;
-  setDate: Dispatch<React.SetStateAction<Value>>;
-  date: Value;
+  setExpireAtDate: Dispatch<React.SetStateAction<Value>>;
+  expireAtDate: Value;
   errors?: string[];
 }
 
 const Settings = ({
   setClosePollOnDate,
   closePollOnDate,
-  setDate,
-  date,
+  setExpireAtDate,
+  expireAtDate,
   errors,
 }: ISettings) => {
   const [changeVoteOpen, setChangeVoteOpen] = useState(false);
@@ -37,8 +37,8 @@ const Settings = ({
       >
         <DateTimePicker
           className={'my-calendar'}
-          onChange={setDate}
-          value={date}
+          onChange={setExpireAtDate}
+          value={expireAtDate}
         />
         {errors && (
           <p className={'text-start text-sm text-red-500 font-light'}>

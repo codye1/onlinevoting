@@ -10,6 +10,7 @@ import { Vote } from '../pages/Poll/Poll.tsx';
 import { PollItem } from '@components/PollsList.tsx';
 import { Poll, PollOption } from '../utils/types.ts';
 import { AddPoll } from '../actions/addPoll.ts';
+import { QueryParams } from 'src/pages/Home/Home.tsx';
 
 interface PollResponse extends Poll {
   id: string;
@@ -38,8 +39,10 @@ export interface Pagination {
   currentPage: number;
 }
 
-export interface PollsResponse {
-  polls: PollItem[];
+export interface PollsResponse<T> {
+  polls: T[];
+  nextCursor: string | null;
+  hasMore: boolean;
 }
 
 interface AuthResponce {
@@ -56,9 +59,11 @@ interface ImgBBResponse {
 
 // ImgBB API key (replace with your actual key)
 const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://localhost:3000',
+  baseUrl: API_BASE_URL,
   prepareHeaders: (headers) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -156,21 +161,16 @@ export const apiSlice = createApi({
       transformResponse: (response: { poll: PollResultsResponse }) =>
         response.poll,
     }),
-    getPolls: builder.query<
-      PollsResponse,
-      {
-        filter: string;
-        pageSize: number;
-        search: string;
-        category: string;
-        sortByVotes?: 'asc' | 'desc';
-      }
-    >({
+    getPolls: builder.query<PollsResponse<PollItem>, QueryParams>({
       query: (params) => ({
         url: 'polls',
         method: 'GET',
-        params: { ...params },
+        params,
       }),
+      serializeQueryArgs: ({ endpointName }) => endpointName,
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg?.cursor !== previousArg?.cursor;
+      },
     }),
     vote: builder.mutation<AuthResponce, Vote>({
       query: (vote) => ({

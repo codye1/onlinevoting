@@ -1,4 +1,3 @@
-
 import { addPollFormSchema } from '@utils/definitions.ts';
 import { store } from '../reducer/store.ts';
 import { apiSlice } from '../reducer/api.ts';
@@ -11,16 +10,13 @@ type apiError = {
 
 type AddPollOptions = string[] | { file: string; title: string }[];
 
-export interface AddPoll extends Omit<Poll, 'options' | 'creator'> {
-  creator?: string;
+export interface AddPoll extends Omit<Poll, 'options' | 'creatorId'> {
+  creatorId?: string;
   options: AddPollOptions;
 }
 
 const addPoll =
-  (closeModal: () => void, setIsLoading: (v: boolean) => void) =>
-  async (_: unknown, formData: FormData) => {
-    setIsLoading(true);
-
+  (closeModal: () => void) => async (_: unknown, formData: FormData) => {
     try {
       const parsed = addPollFormSchema.safeParse(formData);
 
@@ -28,28 +24,20 @@ const addPoll =
         return { errors: parsed.error.flatten().fieldErrors };
       }
 
-      await store.dispatch(
-        apiSlice.endpoints.addPoll.initiate(parsed.data),
-      ).unwrap();
+      await store
+        .dispatch(apiSlice.endpoints.addPoll.initiate(parsed.data))
+        .unwrap();
 
       closeModal();
     } catch (e) {
       return handleApiError(e);
-    } finally {
-      setIsLoading(false);
     }
   };
-
-
 
 export default addPoll;
 
 const handleApiError = (error: unknown) => {
-  if (
-    typeof error === 'object' &&
-    error !== null &&
-    'data' in error
-  ) {
+  if (typeof error === 'object' && error !== null && 'data' in error) {
     return {
       errors: {
         api: [(error as apiError).data.message],
@@ -63,5 +51,3 @@ const handleApiError = (error: unknown) => {
     },
   };
 };
-
-

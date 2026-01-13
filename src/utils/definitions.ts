@@ -61,10 +61,9 @@ export const signupFormState = z
     path: ['confirmPassword'],
   });
 
-const fd = (v: unknown) => v instanceof FormData ? v : null;
+const fd = (v: unknown) => (v instanceof FormData ? v : null);
 
-const get = (fd: FormData, key: string) =>
-  fd.get(key)?.toString();
+const get = (fd: FormData, key: string) => fd.get(key)?.toString();
 
 const imageSchema = z.object({
   file: z
@@ -78,7 +77,6 @@ const imageSchema = z.object({
     })
     .trim(),
 });
-
 
 const optionsFromFormData = z.preprocess((data) => {
   const formData = fd(data);
@@ -113,11 +111,7 @@ const optionsFromFormData = z.preprocess((data) => {
 }, z.unknown());
 
 const basePollSchema = {
-  title: z
-    .string()
-    .min(1, { message: 'Назва обов’язкова.' })
-    .max(100)
-    .trim(),
+  title: z.string().min(1, { message: 'Назва обов’язкова.' }).max(100).trim(),
 
   description: z.string().max(500).optional(),
 
@@ -131,22 +125,23 @@ const basePollSchema = {
   expireAt: z
     .date()
     .optional()
-    .refine((date) => {
-      if (!date) return true;
-      return date >= new Date(Date.now() + 2 * 60 * 1000);
-    }, {
-      message:
-        'Дата має бути щонайменше на 2 хвилини пізніше від поточного часу.',
-    }),
+    .refine(
+      (date) => {
+        if (!date) return true;
+        return date >= new Date(Date.now() + 2 * 60 * 1000);
+      },
+      {
+        message:
+          'Дата має бути щонайменше на 2 хвилини пізніше від поточного часу.',
+      },
+    ),
 };
 
 const multiplePollSchema = z.object({
   ...basePollSchema,
   type: z.literal(PollType.MULTIPLE),
   options: optionsFromFormData.pipe(
-    z.array(
-      z.string().min(1).max(100).trim(),
-    ).min(2, {
+    z.array(z.string().min(1).max(100).trim()).min(2, {
       message: 'Потрібно щонайменше два варіанти.',
     }),
   ),
@@ -162,27 +157,27 @@ const imagePollSchema = z.object({
   ),
 });
 
-export const addPollFormSchema = z.preprocess((data) => {
-  if (!(data instanceof FormData)) return data;
+export const addPollFormSchema = z.preprocess(
+  (data) => {
+    if (!(data instanceof FormData)) return data;
 
-  return {
-    title: get(data, 'title'),
-    description: get(data, 'description') || undefined,
-    image: get(data, 'image') || '',
-    changeVote: get(data, 'changeVote') === 'on',
-    voteInterval: get(data, 'voteInterval') ?? '',
-    resultsVisibility: get(data, 'resultsVisibility'),
-    category: get(data, 'category'),
-    type: get(data, 'type'),
-    expireAt:
-      get(data, 'closePollOnDate') === 'true'
-        ? new Date(get(data, 'date')!)
-        : undefined,
-    options: undefined,
-  };
-},
-z.discriminatedUnion('type', [
-  multiplePollSchema,
-  imagePollSchema,
-]));
-
+    return {
+      title: get(data, 'title'),
+      description: get(data, 'description') || undefined,
+      image: get(data, 'image') || '',
+      changeVote: get(data, 'changeVote') === 'on',
+      voteInterval: get(data, 'voteInterval') ?? '',
+      resultsVisibility: get(data, 'resultsVisibility'),
+      category: get(data, 'category'),
+      type: get(data, 'type'),
+      expireAt:
+        get(data, 'closePollOnDate') === 'true'
+          ? new Date(get(data, 'expireAtDate')!)
+          : undefined,
+      // Pass the whole FormData further so `optionsFromFormData` can extract options
+      // based on poll type and related fields.
+      options: data,
+    };
+  },
+  z.discriminatedUnion('type', [multiplePollSchema, imagePollSchema]),
+);

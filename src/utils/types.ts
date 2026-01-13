@@ -10,7 +10,10 @@ export interface Poll {
   description?: string;
   image?: string;
   options: PollOption[];
-  creator: string;
+  creatorId: string;
+  creator?: {
+    email: string;
+  };
   type: PollType;
   resultsVisibility: PollResultsVisibility;
   changeVote: boolean;

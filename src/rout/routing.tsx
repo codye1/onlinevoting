@@ -7,7 +7,6 @@ const Routing = () => {
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const location = useLocation();
   const redirectUrl = encodeURIComponent(location.pathname + location.search);
-  console.log(isAuth);
   return (
     <Routes>
       {isAuth ? (

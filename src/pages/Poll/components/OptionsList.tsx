@@ -3,7 +3,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import getErrorMessage from '@utils/getErrorMessage.ts';
 import { PollOption, PollType } from '@utils/types.ts';
 
-interface OptionsList {
+interface IOptionsList {
   options: PollOption[];
   pollType: PollType;
   selectedOptionId: string;
@@ -17,7 +17,7 @@ const OptionsList = ({
   handleOptionChange,
   error,
   pollType,
-}: OptionsList) => {
+}: IOptionsList) => {
   const errorMessage = getErrorMessage(error);
 
   return (

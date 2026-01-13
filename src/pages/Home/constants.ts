@@ -1,8 +1,7 @@
 import img from '@public/img.svg';
 import checkPool from '@public/checkPool.svg';
-import {
-  PollType,
-} from '@utils/types.ts';
+import { PollType } from '@utils/types.ts';
+import { Category, PollResultsVisibility } from '@utils/types';
 
 export const typeOptions: { label: string; value: PollType; icon?: string }[] =
   [
@@ -14,17 +13,13 @@ export const typeOptions: { label: string; value: PollType; icon?: string }[] =
     { label: 'Голосування за зображеннями', value: PollType.IMAGE, icon: img },
   ];
 
-
 export const filterOptions = [
-              { label: 'Усі', value: 'ALL' },
-              { label: 'Закриті', value: 'CLOSED' },
-              { label: 'Активні', value: 'ACTIVE' },
-              { label: 'Створені', value: 'CREATED' },
-              { label: 'Брав участь', value: 'PARTICIPATED' },
-            ]
-
-
-            import { Category, PollResultsVisibility } from "@utils/types";
+  { label: 'Усі', value: 'ALL' },
+  { label: 'Закриті', value: 'CLOSED' },
+  { label: 'Активні', value: 'ACTIVE' },
+  { label: 'Створені', value: 'CREATED' },
+  { label: 'Брав участь', value: 'PARTICIPATED' },
+];
 
 export const visibilityOptions: {
   label: string;
@@ -90,4 +85,3 @@ export const categoryOptions = [
   { label: 'Стартапи та бізнес', value: Category.STARTUPS_AND_BUSINESS },
   { label: 'Соціальні питання', value: Category.SOCIAL_ISSUES },
 ];
-
