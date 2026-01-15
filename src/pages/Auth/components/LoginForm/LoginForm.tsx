@@ -26,7 +26,7 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
     <form
       onSubmit={handleSubmit}
       className={
-        'bg-[#1E1E1E] text-xl p-10 rounded-sm flex text-center justify-center flex-col max-w-100 m-auto'
+        'shadow-m bg-foreground text-xl p-10 rounded-sm flex text-center justify-center flex-col max-w-100 m-auto '
       }
     >
       <h1 className={'text-2xl'}>Login</h1>
@@ -49,7 +49,10 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
 
       <p className={'mt-[30px] text-base font-light'}>
         Ще не маєте облікового запису?{' '}
-        <strong className={'cursor-pointer'} onClick={onHaveAccount}>
+        <strong
+          className={'cursor-pointer text-shadow-m'}
+          onClick={onHaveAccount}
+        >
           Зареєструйтесь
         </strong>
       </p>

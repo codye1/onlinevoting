@@ -40,16 +40,14 @@ const Poll = () => {
   console.log(data);
   return (
     <menu
-      className={
-        'bg-[rgba(255,255,255,0.25)] rounded p-[20px] max-w-[765px] m-auto'
-      }
+      className={'bg-foreground shadow-m rounded p-[20px] max-w-[765px] m-auto'}
     >
       <PollHeader
         title={data.title}
         creator={data.creator?.email || 'Анонім'}
         startDate={data.createdAt}
       />
-      <span className={'mt-[20px] flex font-normal'}>
+      <section className={'mt-[20px] flex font-normal'}>
         {data.description && (
           <img
             className={'w-[20px] h-[20px] mr-[10px]'}
@@ -63,9 +61,9 @@ const Poll = () => {
             <img className={'mt-[20px] m-auto'} src={data.image} alt="" />
           )}
         </div>
-      </span>
-      <span>
-        <h1>Зроби свій вибір</h1>
+      </section>
+      <section>
+        {!data.description && <h2>Зроби свій вибір</h2>}
         <OptionsList
           options={data.options}
           selectedOptionId={userVote ? userVote : ''}
@@ -103,7 +101,7 @@ const Poll = () => {
             className={'pr-[20px] pl-[20px]'}
           />
         </div>
-      </span>
+      </section>
     </menu>
   );
 };

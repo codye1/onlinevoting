@@ -1,5 +1,6 @@
 import { ChangeEvent } from 'react';
 import { inputTypes } from '@utils/types.ts';
+import Errors from './Errors';
 
 interface TextInput {
   label?: string;
@@ -12,7 +13,7 @@ interface TextInput {
     value: string;
   };
   button?: {
-    icon: string; // Путь к SVG или название иконки
+    icon: string;
     onClick?: () => void;
   };
   errors?: string[];
@@ -29,7 +30,7 @@ const TextInput = ({
   classNameInput = 'p-[15px]',
 }: TextInput) => {
   return (
-    <label className="flex flex-col rounded-md m-[5px]">
+    <label className="flex flex-col rounded-md my-[5px]">
       {label}
       <div className="relative w-auto">
         <input
@@ -37,7 +38,7 @@ const TextInput = ({
           placeholder={placeholder}
           value={trackValue?.value}
           onChange={trackValue?.onChange}
-          className={` p-1 rounded-sm shadow-sm  w-full bg-[#4B4B4B] pr-[40px] ${classNameInput}`}
+          className={` p-1 rounded-sm shadow-s  w-full bg-light focus:bg-focus pr-[40px] ${classNameInput}`}
           type={type}
         />
         {button && (
@@ -51,13 +52,7 @@ const TextInput = ({
           />
         )}
       </div>
-      {errors && (
-        <ul className="text-start text-red-500 text-xs">
-          {errors.map((error) => (
-            <li key={error}>{error}</li>
-          ))}
-        </ul>
-      )}
+      {errors && <Errors errors={errors} />}
     </label>
   );
 };

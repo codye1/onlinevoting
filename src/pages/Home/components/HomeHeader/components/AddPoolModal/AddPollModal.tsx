@@ -13,7 +13,7 @@ type ValuePiece = Date | null;
 export type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 type AddPollErrors = Partial<
-  Record<'title' | 'description' | 'options' | 'date', string[]>
+  Record<'title' | 'description' | 'options' | 'date' | 'api', string[]>
 >;
 
 type AddPollState =
@@ -37,23 +37,14 @@ const AddPollModal = ({ handleClose }: IAddPollModal) => {
   );
 
   const [descriptionImg, setDescriptionImg] = useState<string | undefined>();
-  const [uploadedImages, setUploadedImages] = useState<
-    { file: string; title: string }[]
-  >([]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    formData.set('closePollOnDate', closePollOnDate.toString());
 
+    const formData = new FormData(event.currentTarget);
     if (closePollOnDate && expireAtDate instanceof Date) {
       formData.set('expireAtDate', expireAtDate.toISOString());
     }
-
-    uploadedImages.forEach((item, index) => {
-      formData.append(`image-${index}`, item.file);
-      formData.append(`image-title-${index}`, item.title);
-    });
     startTransition(() => {
       action(formData);
     });
@@ -75,11 +66,7 @@ const AddPollModal = ({ handleClose }: IAddPollModal) => {
           errors={state?.errors?.description}
         />
 
-        <OptionsList
-          uploadedImages={uploadedImages}
-          setUploadedImages={setUploadedImages}
-          optionsErrors={state?.errors?.options}
-        />
+        <OptionsList optionsErrors={state?.errors?.options} />
         <Settings
           setClosePollOnDate={setClosePollOnDate}
           closePollOnDate={closePollOnDate}
@@ -94,6 +81,13 @@ const AddPollModal = ({ handleClose }: IAddPollModal) => {
           label={'Створити голосування'}
           isLoading={isPending}
         />
+        {state?.errors?.api && (
+          <div className="mt-[10px] text-danger">
+            {state.errors.api.map((err, idx) => (
+              <div key={idx}>[API] {err}</div>
+            ))}
+          </div>
+        )}
       </form>
     </Modal>
   );

@@ -1,3 +1,4 @@
+@config "../tailwind.config.js";
 @import 'tailwindcss';
 
 @font-face {
@@ -7,43 +8,29 @@
   font-style: normal;
 }
 
-body {
-  width: 100%;
+@layer base {
+  html {
+    @apply font-sans;
+    line-height: 1.5;
+    font-weight: 500;
+    color-scheme: light dark;
+  }
+
+  :root {
+    @apply bg-dark text-default antialiased flex justify-center items-center;
+
+    margin: auto;
+    max-width: 1600px;
+    width: 100%;
+    padding: 0 30px;
+  }
+
+  input:focus,
+  textarea:focus {
+    @apply outline-none bg-border;
+  }
 }
 
-:root {
-  font-family: Oswald, sans-serif;
-  line-height: 1.5;
-  font-weight: 500;
-
-  color-scheme: light dark;
-  color: #e0e0e0;
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  margin: auto;
-  max-width: 1600px;
-  width: 100%;
-  padding: 0 30px;
-}
-
-input:focus {
-  outline: none;
-  background-color: #808080;
-}
-
-textarea:focus {
-  outline: none;
-  background-color: #808080;
-}
 
 /* HTML: <div class="loader"></div> */
 .loader {

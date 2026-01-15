@@ -18,7 +18,7 @@ const Modal = ({ children, close }: ModalProps) => {
       ></div>
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative z-50 bg-[#242424] p-6 rounded-md shadow-lg w-full max-w-[847px] mx-auto mr-[30px] ml-[30px] max-h-[80vh] overflow-y-auto"
+        className="relative z-50 bg-foreground shadow-m p-6 rounded-md w-full max-w-[847px] mx-auto mr-[30px] ml-[30px] max-h-[80vh] overflow-y-auto"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"

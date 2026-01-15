@@ -65,16 +65,17 @@ const fd = (v: unknown) => (v instanceof FormData ? v : null);
 
 const get = (fd: FormData, key: string) => fd.get(key)?.toString();
 
-const imageSchema = z.object({
-  file: z
-    .string()
-    .url({ message: 'URL зображення обов’язковий і має бути дійсним.' }),
+const optionSchema = z.object({
+  file: z.union([
+    z
+      .string()
+      .url({ message: 'URL зображення обов’язковий і має бути дійсним.' }),
+    z.null(),
+  ]),
   title: z
     .string()
-    .min(1, { message: 'Назва зображення обов’язкова.' })
-    .max(100, {
-      message: 'Назва зображення має містити не більше 100 символів.',
-    })
+    .min(1, { message: 'Назва варіанту обов’язкова.' })
+    .max(100, { message: 'Назва варіанту має містити не більше 100 символів.' })
     .trim(),
 });
 
@@ -82,32 +83,27 @@ const optionsFromFormData = z.preprocess((data) => {
   const formData = fd(data);
   if (!formData) return [];
 
-  const type = get(formData, 'type');
+  try {
+    const parsed = JSON.parse(get(formData, 'options') ?? '[]') as unknown;
+    if (!Array.isArray(parsed)) return [];
 
-  if (type === PollType.MULTIPLE) {
-    try {
-      return JSON.parse(get(formData, 'options') ?? '[]');
-    } catch {
-      return [];
-    }
+    return parsed.map((item) => {
+      if (typeof item === 'string') {
+        return { file: null, title: item };
+      }
+
+      if (typeof item === 'object' && item !== null) {
+        const record = item as Record<string, unknown>;
+        const file = typeof record.file === 'string' ? record.file : null;
+        const title = typeof record.title === 'string' ? record.title : '';
+        return { file, title };
+      }
+
+      return { file: null, title: '' };
+    });
+  } catch {
+    return [];
   }
-
-  if (type === PollType.IMAGE) {
-    const result: { file: string; title: string }[] = [];
-    let i = 0;
-
-    while (formData.has(`image-${i}`)) {
-      const file = get(formData, `image-${i}`);
-      const title = get(formData, `image-title-${i}`) ?? '';
-
-      if (file) result.push({ file, title });
-      i++;
-    }
-
-    return result;
-  }
-
-  return [];
 }, z.unknown());
 
 const basePollSchema = {
@@ -137,47 +133,72 @@ const basePollSchema = {
     ),
 };
 
-const multiplePollSchema = z.object({
-  ...basePollSchema,
-  type: z.literal(PollType.MULTIPLE),
-  options: optionsFromFormData.pipe(
-    z.array(z.string().min(1).max(100).trim()).min(2, {
-      message: 'Потрібно щонайменше два варіанти.',
-    }),
-  ),
-});
+const pollSchema = z
+  .object({
+    ...basePollSchema,
+    type: z.nativeEnum(PollType),
+    options: optionsFromFormData.pipe(z.array(optionSchema)),
+  })
+  .superRefine((data, ctx) => {
+    if (data.type === PollType.MULTIPLE) {
+      if (data.options.length < 2) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['options'],
+          message: 'Потрібно щонайменше два варіанти.',
+        });
+      }
 
-const imagePollSchema = z.object({
-  ...basePollSchema,
-  type: z.literal(PollType.IMAGE),
-  options: optionsFromFormData.pipe(
-    z.array(imageSchema).min(1, {
-      message: 'Потрібно щонайменше одне зображення.',
-    }),
-  ),
-});
+      data.options.forEach((opt, index) => {
+        if (opt.file !== null) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['options', index, 'file'],
+            message: 'Для MULTIPLE голосування поле file має бути null.',
+          });
+        }
+      });
+    }
 
-export const addPollFormSchema = z.preprocess(
-  (data) => {
-    if (!(data instanceof FormData)) return data;
+    if (data.type === PollType.IMAGE) {
+      if (data.options.length < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['options'],
+          message: 'Потрібно щонайменше одне зображення.',
+        });
+      }
 
-    return {
-      title: get(data, 'title'),
-      description: get(data, 'description') || undefined,
-      image: get(data, 'image') || '',
-      changeVote: get(data, 'changeVote') === 'on',
-      voteInterval: get(data, 'voteInterval') ?? '',
-      resultsVisibility: get(data, 'resultsVisibility'),
-      category: get(data, 'category'),
-      type: get(data, 'type'),
-      expireAt:
-        get(data, 'closePollOnDate') === 'true'
-          ? new Date(get(data, 'expireAtDate')!)
-          : undefined,
-      // Pass the whole FormData further so `optionsFromFormData` can extract options
-      // based on poll type and related fields.
-      options: data,
-    };
-  },
-  z.discriminatedUnion('type', [multiplePollSchema, imagePollSchema]),
-);
+      data.options.forEach((opt, index) => {
+        if (opt.file === null) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['options', index, 'file'],
+            message: 'Зображення обов’язкове.',
+          });
+        }
+      });
+    }
+  });
+
+export const addPollFormSchema = z.preprocess((data) => {
+  if (!(data instanceof FormData)) return data;
+
+  return {
+    title: get(data, 'title'),
+    description: get(data, 'description') || undefined,
+    image: get(data, 'image') || '',
+    changeVote: get(data, 'changeVote') === 'on',
+    voteInterval: get(data, 'voteInterval') ?? '',
+    resultsVisibility: get(data, 'resultsVisibility'),
+    category: get(data, 'category'),
+    type: get(data, 'type'),
+    expireAt:
+      get(data, 'closePollOnDate') === 'true'
+        ? new Date(get(data, 'expireAtDate')!)
+        : undefined,
+    // Pass the whole FormData further so `optionsFromFormData` can extract options
+    // based on poll type and related fields.
+    options: data,
+  };
+}, pollSchema);

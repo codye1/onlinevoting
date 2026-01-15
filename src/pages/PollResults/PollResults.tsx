@@ -24,8 +24,10 @@ const PollResults = () => {
     }
   };
 
+  console.log(poll);
+
   return (
-    <div className="bg-[rgba(255,255,255,0.25)] rounded p-[20px] max-w-[765px] m-auto">
+    <div className="bg-foreground shadow-m rounded p-[20px] max-w-[765px] m-auto">
       {isLoading && <div>Завантаження...</div>}
       {error && <div>Помилка: {getErrorMessage(error)}</div>}
 

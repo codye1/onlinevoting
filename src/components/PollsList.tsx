@@ -27,7 +27,7 @@ const PollsList = ({ polls }: PollsList) => {
         return (
           <div
             key={p.id}
-            className="w-full border rounded p-[20px] mt-[15px] bg-[rgba(255,255,255,0.25)] cursor-pointer flex items-center justify-between"
+            className="w-full shadow-m  rounded p-[20px] mt-[15px] bg-foreground hover:bg-hover cursor-pointer flex items-center justify-between"
             onClick={() => {
               navigate('/poll/' + p.id);
             }}
@@ -40,7 +40,7 @@ const PollsList = ({ polls }: PollsList) => {
               />
               <span className="flex flex-col">
                 <h1>{p.title}</h1>
-                <h2 className="opacity-50">
+                <h2 className="opacity-50 text-default">
                   {new Date(p.createdAt).toLocaleDateString()}
                 </h2>
               </span>
@@ -54,7 +54,9 @@ const PollsList = ({ polls }: PollsList) => {
               <span className="w-[100px] text-center flex items-center justify-center">
                 <span
                   className={`w-[8px] h-[8px] rounded-full mr-[5px] ${
-                    isLive ? 'bg-green-500' : 'bg-red-500'
+                    isLive
+                      ? 'bg-green-500 shadow-[0_0_10px_green]'
+                      : 'bg-red-500 shadow-[0_0_10px_red]'
                   }`}
                 ></span>
                 {isLive ? 'Live' : 'Closed'}

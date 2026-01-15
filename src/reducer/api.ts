@@ -166,8 +166,20 @@ export const apiSlice = createApi({
         url: 'polls',
         method: 'GET',
         params,
+        responseHandler: async (response) => {
+          const text = await response.text();
+          return text ? (JSON.parse(text) as unknown) : null;
+        },
       }),
-      serializeQueryArgs: ({ endpointName }) => endpointName,
+      transformResponse: (response: PollsResponse<PollItem> | null) => ({
+        polls: response?.polls ?? [],
+        nextCursor: response?.nextCursor ?? null,
+        hasMore: response?.hasMore ?? false,
+      }),
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        // Do not include `cursor` in the cache key: keep one cache entry per filter/search combo.
+        return `${endpointName}|${queryArgs.filter}|${queryArgs.pageSize}|${queryArgs.search}|${queryArgs.category}|${queryArgs.sortByVotes ?? ''}`;
+      },
       forceRefetch({ currentArg, previousArg }) {
         return currentArg?.cursor !== previousArg?.cursor;
       },

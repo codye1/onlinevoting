@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import check from '@public/check.svg';
 import dropDown from '@public/dropDown.svg';
 
@@ -31,19 +31,35 @@ const DropDown = ({
   const [selected, setSelected] = useState<Option | null>(
     options.find((item) => item.value == value) || options[0],
   );
-
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const handleSelect = (option: Option) => {
     setSelected(option);
     onSelect(String(option.value));
     setIsOpen(false);
   };
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative ${className}`} ref={dropdownRef}>
       {label && <h1>{label}</h1>}
       <button
         type="button"
-        className="bg-[#4B4B4B] text-white rounded-sm  p-[10px] w-full text-left cursor-pointer flex items-center justify-between"
+        className="bg-light shadow-s text-white rounded-sm  p-[10px] w-full text-left cursor-pointer flex items-center justify-between min-w-[115px]"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {selected ? (
@@ -64,11 +80,11 @@ const DropDown = ({
       </button>
 
       {isOpen && (
-        <ul className="absolute z-10 bg-[#4B4B4B] border border-gray-600 rounded-sm mt-[-2px] w-full max-h-60 overflow-y-auto overflow-x-hidden shadow-lg no-scrollbar">
+        <ul className="absolute z-10 bg-light shadow-m mt-[5px] rounded-sm w-full max-h-60 overflow-y-auto overflow-x-hidden shadow-lg no-scrollbar ">
           {options.map((option) => (
             <li
               key={option.value}
-              className="p-2 hover:bg-gray-600 cursor-pointer text-white flex justify-between items-center"
+              className="p-2 hover:bg-hover cursor-pointer text-white flex justify-between items-center"
               onClick={() => handleSelect(option)}
             >
               <div className="flex items-center">

@@ -13,10 +13,10 @@ const TextArea = ({ label, name, placeholder, errors }: TextArea) => {
       <textarea
         name={name}
         placeholder={placeholder}
-        className={'p-1 rounded-sm p-[15px] shadow-sm w-auto bg-[#4B4B4B] '}
+        className={'rounded-sm p-[15px] shadow-s w-auto bg-light'}
       />
       {errors && (
-        <ul className={'text-start text-sm  text-red-500 text-xs'}>
+        <ul className={'text-start text-red-500 text-xs'}>
           {errors.map((error) => (
             <li key={error}> {error}</li>
           ))}

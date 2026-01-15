@@ -45,15 +45,22 @@ const HomeHeader = ({
   return (
     <div className={'border-b pb-[20px] flex justify-between'}>
       <span className={'flex items-center'}>
-        <img className={'w-[25px] h-[25px]'} src={iconFilter} alt="" />
+        <img
+          className={'w-[25px] h-[25px] mr-[10px]'}
+          src={iconFilter}
+          alt=""
+        />
         <DropDown
           options={filterOptions}
           onSelect={handleFilterChange}
-          className={'pr-[30px]'}
+          className={'mr-[20px]'}
           name={'filter'}
         />
         <DropDown
-          options={[{ label: 'Усі', value: Category.ALL }, ...categoryOptions]}
+          options={[
+            { label: 'Категорія', value: Category.ALL },
+            ...categoryOptions,
+          ]}
           name={'category'}
           className={'mr-[20px]'}
           onSelect={handleCategoryChange}

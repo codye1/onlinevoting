@@ -5,10 +5,11 @@ import { Poll } from '@utils/types.ts';
 type apiError = {
   data: {
     message: string;
+    errors?: Record<string, string[]>;
   };
 };
 
-type AddPollOptions = string[] | { file: string; title: string }[];
+type AddPollOptions = { file: string | null; title: string }[];
 
 export interface AddPoll extends Omit<Poll, 'options' | 'creatorId'> {
   creatorId?: string;
