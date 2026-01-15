@@ -31,7 +31,7 @@ const OptionsList = ({
             <label
               key={index}
               htmlFor={`option-${index}`}
-              className={`flex flex-col justify-between mt-3 rounded-md cursor-pointer border border-gray-700 relative`}
+              className={`flex flex-col justify-between mt-3 rounded-md cursor-pointer shadow-m relative`}
               style={{ opacity: selectedOptionId !== option.id ? '0.5' : '1' }}
             >
               <div className="flex flex-grow h-40 p-2 mx-auto">
@@ -42,7 +42,7 @@ const OptionsList = ({
                 />
               </div>
               <div
-                className={`flex items-center h-10 border-t px-3 py-2 border-gray-700 `}
+                className={`flex items-center h-10 border-t px-3 py-2 border-border `}
               >
                 <input
                   id={`option-${index}`}

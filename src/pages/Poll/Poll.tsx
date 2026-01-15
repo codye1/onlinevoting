@@ -4,9 +4,11 @@ import MyButton from '@components/MyButton.tsx';
 import arrow from '@public/arrow.svg';
 import results from '@public/results.svg';
 import PollHeader from './components/PollHeader.tsx';
+import PollSkeleton from './components/PollSkeleton.tsx';
 import { useState } from 'react';
 import { useGetPollQuery, useVoteMutation } from '../../reducer/api.ts';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import Error from '@components/Error.tsx';
 
 export interface Vote {
   optionId: string;
@@ -27,17 +29,21 @@ const Poll = () => {
     useVoteMutation();
 
   if (isLoading) {
-    return <div>Загрузка опитування...</div>;
+    return <PollSkeleton />;
   }
 
-  if (error || !id || !data) {
-    return <div>Помилка загрузки опитування</div>;
+  if (error) {
+    return <Error error={error} />;
+  }
+
+  if (!data) {
+    return <Error error={'Опитування не знайдено'} />;
   }
 
   if (userVote === null && data.userVote !== null) {
     setUserVote(data.userVote.id);
   }
-  console.log(data);
+
   return (
     <menu
       className={'bg-foreground shadow-m rounded p-[20px] max-w-[765px] m-auto'}

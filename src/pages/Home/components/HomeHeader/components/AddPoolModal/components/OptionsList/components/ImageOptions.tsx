@@ -1,63 +1,86 @@
 import ImageUploadInput from '@components/ImageUploadInput';
-import { OptionDraft } from '../OptionsList';
-import TextInput from '@components/TextInput';
-import { inputTypes } from '@utils/types';
+import Error from '@components/Error.tsx';
+import TextInput from '@components/TextInput.tsx';
 import close from '@public/close.svg';
+import { inputTypes } from '@utils/types.ts';
+import type {
+  Control,
+  FieldArrayWithId,
+  UseFieldArrayAppend,
+  UseFieldArrayRemove,
+} from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { AddPollFormValues } from '../../../AddPollModal.tsx';
+
+type OptionField = FieldArrayWithId<AddPollFormValues, 'options', 'id'>;
 
 interface IImageOptions {
-  options: { file: string | null; title: string }[];
-  setOptions: React.Dispatch<
-    React.SetStateAction<{ file: string | null; title: string }[]>
-  >;
+  control: Control<AddPollFormValues>;
+  fields: OptionField[];
+  append: UseFieldArrayAppend<AddPollFormValues, 'options'>;
+  remove: UseFieldArrayRemove;
 }
 
-const ImageOptions = ({ options, setOptions }: IImageOptions) => {
+const ImageOptions = ({ control, fields, append, remove }: IImageOptions) => {
   return (
     <div className="mt-4 grid grid-cols-3 gap-2">
       <ImageUploadInput
         name={'image'}
         onImagesChange={(images) => {
-          const newImages: OptionDraft[] = images.map((file) => ({
-            file,
-            title: '',
-          }));
-          setOptions((prev) => [...prev, ...newImages]);
+          images.forEach((file) => append({ file, title: '' }));
         }}
       />
-      {options.length > 0 &&
-        options.map((item, index) => (
-          <div key={index} className="relative">
-            <img
-              src={item.file ?? ''}
-              alt={`Uploaded ${index}`}
-              className="h-32 rounded-md object-contain border border-gray-300 dark:border-gray-700 m-auto"
-            />
-            <TextInput
-              type={inputTypes.text}
-              placeholder={`Назва фото ${index + 1}`}
-              name={`image-title-${index}`}
-              trackValue={{
-                value: item.title,
-                onChange: (e) =>
-                  setOptions((prev) => {
-                    const next = [...prev];
-                    next[index] = { ...next[index], title: e.target.value };
-                    return next;
-                  }),
-              }}
-              classNameInput="p-[10px]"
-            />
-            <button
-              type="button"
-              onClick={() =>
-                setOptions((prev) => prev.filter((_, i) => i !== index))
-              }
-              className="absolute right-0 top-0  cursor-pointer"
-            >
-              <img className={'w-[20px] h-[20px]'} src={close} alt="" />
-            </button>
-          </div>
-        ))}
+
+      {fields.map((f, index) => (
+        <div key={f.id} className="relative">
+          <Controller
+            name={`options.${index}.file` as const}
+            control={control}
+            render={({ field, fieldState }) => (
+              <>
+                <img
+                  src={(field.value as string | null) ?? ''}
+                  alt={`Uploaded ${index}`}
+                  className="h-32 rounded-md object-contain border border-gray-300 dark:border-gray-700 m-auto"
+                />
+                {fieldState.error?.message && (
+                  <Error error={fieldState.error.message} />
+                )}
+              </>
+            )}
+          />
+
+          <Controller
+            name={`options.${index}.title` as const}
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                type={inputTypes.text}
+                placeholder={`Назва фото ${index + 1}`}
+                name={`image-title-${index}`}
+                trackValue={{
+                  value: field.value ?? '',
+                  onChange: (e) => field.onChange(e.target.value),
+                }}
+                errors={
+                  fieldState.error?.message
+                    ? [fieldState.error.message]
+                    : undefined
+                }
+                classNameInput="p-[10px]"
+              />
+            )}
+          />
+
+          <button
+            type="button"
+            onClick={() => remove(index)}
+            className="absolute right-0 top-0  cursor-pointer"
+          >
+            <img className={'w-[20px] h-[20px]'} src={close} alt="" />
+          </button>
+        </div>
+      ))}
     </div>
   );
 };

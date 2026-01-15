@@ -21,7 +21,7 @@ const MyButton = ({
     <button
       onClick={onClick}
       type={type}
-      className={`mt-[25px] p-[10px] bg-light shadow-s rounded-md cursor-pointer flex justify-center items-center hover:bg-hover ${isLoading && 'cursor-wait'} ${className}`}
+      className={`${className} mt-[25px] p-[10px] bg-light shadow-s rounded-md cursor-pointer flex justify-center items-center hover:bg-hover ${isLoading && 'cursor-wait'} `}
     >
       {!iconRight && icon && (
         <img className={'w-[20px] h-[20px] mr-[10px]'} src={icon} alt="" />

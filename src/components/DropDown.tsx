@@ -8,7 +8,7 @@ type Option = {
   icon?: string;
 };
 
-type DropDown = {
+interface IDropDown {
   options: Option[];
   onSelect: (value: string) => void;
   placeholder?: string;
@@ -16,7 +16,7 @@ type DropDown = {
   value?: string | number;
   name: string;
   label?: string;
-};
+}
 
 const DropDown = ({
   options,
@@ -26,7 +26,7 @@ const DropDown = ({
   className,
   value,
   label,
-}: DropDown) => {
+}: IDropDown) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Option | null>(
     options.find((item) => item.value == value) || options[0],
@@ -80,7 +80,7 @@ const DropDown = ({
       </button>
 
       {isOpen && (
-        <ul className="absolute z-10 bg-light shadow-m mt-[5px] rounded-sm w-full max-h-60 overflow-y-auto overflow-x-hidden shadow-lg no-scrollbar ">
+        <ul className="absolute z-10 bg-light shadow-m mt-[5px] rounded-sm w-full max-h-60 overflow-y-auto overflow-x-hidden no-scrollbar ">
           {options.map((option) => (
             <li
               key={option.value}

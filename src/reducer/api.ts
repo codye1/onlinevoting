@@ -9,7 +9,7 @@ import type {
 import { Vote } from '../pages/Poll/Poll.tsx';
 import { PollItem } from '@components/PollsList.tsx';
 import { Poll, PollOption } from '../utils/types.ts';
-import { AddPoll } from '../actions/addPoll.ts';
+import { AddPollRequest } from '../utils/types.ts';
 import { QueryParams } from 'src/pages/Home/Home.tsx';
 
 interface PollResponse extends Poll {
@@ -139,7 +139,7 @@ export const apiSlice = createApi({
         }),
       },
     ),
-    addPoll: builder.mutation<AuthResponce, AddPoll>({
+    addPoll: builder.mutation<AuthResponce, AddPollRequest>({
       query: (poll) => ({
         url: 'polls',
         method: 'POST',
@@ -253,6 +253,7 @@ export const apiSlice = createApi({
 export const {
   useGetUsersQuery,
   useLoginMutation,
+  useAddPollMutation,
   useGetPollResultsQuery,
   useGetPollQuery,
   useGetPollsQuery,

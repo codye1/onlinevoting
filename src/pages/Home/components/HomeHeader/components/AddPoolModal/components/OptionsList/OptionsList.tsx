@@ -1,67 +1,106 @@
-import { PollType } from '@utils/types.ts';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import DropDown from '@components/DropDown.tsx';
-import { typeOptions } from '../../../../../../constants.ts';
+import Error from '@components/Error.tsx';
 import Errors from '@components/Errors.tsx';
+import { typeOptions } from '../../../../../../constants.ts';
+import { PollType } from '@utils/types.ts';
+import {
+  Control,
+  Controller,
+  type UseFormClearErrors,
+  useFieldArray,
+  useWatch,
+} from 'react-hook-form';
+import type { AddPollFormValues, OptionDraft } from '../../AddPollModal.tsx';
 import MultipleOptions from './components/MultipleOptions.tsx';
 import ImageOptions from './components/ImageOptions.tsx';
 
 interface IOptionsList {
+  control: Control<AddPollFormValues>;
+  clearErrors: UseFormClearErrors<AddPollFormValues>;
   optionsErrors?: string[];
+  optionSchemaErrorMessage?: string;
 }
 
-export type OptionDraft = { file: string | null; title: string };
+const ensureMultipleDefaults = (options: OptionDraft[]) => {
+  if (options.length >= 2) return options;
+  if (options.length === 1) return [...options, { file: null, title: '' }];
+  return [
+    { file: null, title: '' },
+    { file: null, title: '' },
+  ];
+};
 
-const OptionsList = ({ optionsErrors }: IOptionsList) => {
-  const [typePoll, setTypePoll] = useState<PollType>(PollType.MULTIPLE);
+const OptionsList = ({
+  control,
+  clearErrors,
+  optionsErrors,
+  optionSchemaErrorMessage,
+}: IOptionsList) => {
+  const typePoll = useWatch({ control, name: 'type' });
+  const optionsValue = useWatch({ control, name: 'options' }) ?? [];
 
-  const [options, setOptions] = useState<OptionDraft[]>([]);
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: 'options',
+  });
 
   useEffect(() => {
-    setOptions((prev) => {
-      if (typePoll === PollType.MULTIPLE) {
-        if (prev.length == 0) {
-          return [
-            { file: null, title: '' },
-            { file: null, title: '' },
-          ];
-        }
-        if (prev.length === 1) {
-          return [...prev, { file: null, title: '' }];
-        }
-      }
-      if (typePoll === PollType.IMAGE) {
-        setOptions([]);
-      }
-      return prev;
-    });
-  }, [typePoll]);
+    // When poll type changes we rebuild the field array; clear stale errors
+    // (e.g. options.3.title) that would otherwise stick around.
+    clearErrors('options');
+
+    if (typePoll === PollType.MULTIPLE) {
+      const normalized = ensureMultipleDefaults(optionsValue).map((o) => ({
+        ...o,
+        file: null,
+      }));
+      replace(normalized);
+    }
+    if (typePoll === PollType.IMAGE) {
+      replace([]);
+    }
+  }, [typePoll, clearErrors]);
 
   return (
     <>
-      <DropDown
-        className={'w-1/4'}
-        name={'type'}
-        options={typeOptions}
-        value={typePoll}
-        onSelect={(value) => {
-          setTypePoll(value as PollType);
-        }}
+      <Controller
+        name="type"
+        control={control}
+        render={({ field }) => (
+          <DropDown
+            className={'w-1/4'}
+            name={'type'}
+            options={typeOptions}
+            value={field.value}
+            onSelect={(value) => field.onChange(value as PollType)}
+          />
+        )}
       />
 
       <fieldset>
         <h1 className={'m-[5px]'}>Варіанти</h1>
 
         {typePoll === PollType.MULTIPLE && (
-          <MultipleOptions options={options} setOptions={setOptions} />
+          <MultipleOptions
+            control={control}
+            fields={fields}
+            append={append}
+            remove={remove}
+          />
         )}
+
         {typePoll === PollType.IMAGE && (
-          <ImageOptions options={options} setOptions={setOptions} />
+          <ImageOptions
+            control={control}
+            fields={fields}
+            append={append}
+            remove={remove}
+          />
         )}
 
         {optionsErrors && <Errors errors={optionsErrors} />}
-
-        <input type="hidden" name="options" value={JSON.stringify(options)} />
+        {optionSchemaErrorMessage && <Error error={optionSchemaErrorMessage} />}
       </fieldset>
     </>
   );

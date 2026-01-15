@@ -6,11 +6,14 @@ import { ReactNode } from 'react';
 interface ModalProps {
   children: ReactNode;
   close: () => void;
+  inner?: boolean;
 }
 
-const Modal = ({ children, close }: ModalProps) => {
+const Modal = ({ children, close, inner }: ModalProps) => {
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center ">
+    <div
+      className={`${inner ? 'absolute' : 'fixed'} inset-0 z-40 flex items-center justify-center `}
+    >
       <div
         onClick={close}
         className="fixed inset-0 bg-black opacity-50 z-40"

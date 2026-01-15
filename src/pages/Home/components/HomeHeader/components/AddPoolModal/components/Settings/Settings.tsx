@@ -7,73 +7,99 @@ import {
   visibilityOptions,
   voteIntervalOptions,
 } from '../../../../../../constants.ts';
-import { Dispatch, useState } from 'react';
-import { Value } from '../../AddPollModal.tsx';
+import { Control, Controller } from 'react-hook-form';
+import type { AddPollFormValues } from '../../AddPollModal.tsx';
+import Errors from '@components/Errors.tsx';
 
 interface ISettings {
-  setClosePollOnDate: Dispatch<React.SetStateAction<boolean>>;
-  closePollOnDate: boolean;
-  setExpireAtDate: Dispatch<React.SetStateAction<Value>>;
-  expireAtDate: Value;
+  control: Control<AddPollFormValues>;
   errors?: string[];
 }
 
-const Settings = ({
-  setClosePollOnDate,
-  closePollOnDate,
-  setExpireAtDate,
-  expireAtDate,
-  errors,
-}: ISettings) => {
-  const [changeVoteOpen, setChangeVoteOpen] = useState(false);
-
+const Settings = ({ control, errors }: ISettings) => {
   return (
     <fieldset className={'pr-[5px] mt-[15px]'}>
       <section className="flex gap-[10px] mb-[15px]">
-        <DropDown
-          label={'Результати'}
-          name={'resultsVisibility'}
-          options={visibilityOptions}
-          onSelect={() => {}}
+        <Controller
+          name="resultsVisibility"
+          control={control}
+          render={({ field }) => (
+            <DropDown
+              label={'Результати'}
+              name={'resultsVisibility'}
+              options={visibilityOptions}
+              value={field.value}
+              onSelect={(value) => field.onChange(value)}
+            />
+          )}
         />
-        <DropDown
-          label={'Категорія'}
-          options={categoryOptions}
-          name={'category'}
-          onSelect={() => {}}
+        <Controller
+          name="category"
+          control={control}
+          render={({ field }) => (
+            <DropDown
+              label={'Категорія'}
+              options={categoryOptions}
+              name={'category'}
+              value={field.value}
+              onSelect={(value) => field.onChange(value)}
+            />
+          )}
         />
       </section>
       <section className="flex">
-        <SettingSection
-          label={'Закрити опитування в заплановану дату'}
-          checked={closePollOnDate}
-          setChecked={setClosePollOnDate}
-          classNameChildren={'p-[5px]'}
-        >
-          <DateTimePicker
-            className={'my-calendar'}
-            onChange={setExpireAtDate}
-            value={expireAtDate}
-          />
-          {errors && (
-            <p className={'text-start text-sm text-red-500 font-light'}>
-              {errors.join(', ')}
-            </p>
+        <Controller
+          name="closePollOnDate"
+          control={control}
+          render={({ field }) => (
+            <SettingSection
+              label={'Закрити опитування в заплановану дату'}
+              checked={field.value}
+              setChecked={(checked) => field.onChange(checked)}
+              classNameChildren={'p-[5px]'}
+            >
+              <Controller
+                name="expireAtDate"
+                control={control}
+                render={({ field: dateField }) => (
+                  <DateTimePicker
+                    className={'my-calendar'}
+                    onChange={(v) => dateField.onChange(v)}
+                    value={dateField.value}
+                  />
+                )}
+              />
+              {errors && <Errors errors={errors} />}
+            </SettingSection>
           )}
-        </SettingSection>
-        <SettingSection
-          label={'Зміна вибору'}
-          checked={changeVoteOpen}
-          setChecked={setChangeVoteOpen}
-          name={'changeVote'}
-          classNameChildren={'p-[5px]'}
-        >
-          <DropDown
-            options={voteIntervalOptions}
-            onSelect={() => {}}
-            name={'voteInterval'}
-          />
-        </SettingSection>
+        />
+
+        <Controller
+          name="changeVote"
+          control={control}
+          render={({ field }) => (
+            <SettingSection
+              label={'Зміна вибору'}
+              checked={field.value}
+              setChecked={(checked) => field.onChange(checked)}
+              name={'changeVote'}
+              classNameChildren={'p-[5px]'}
+            >
+              <Controller
+                name="voteInterval"
+                control={control}
+                render={({ field: intervalField }) => (
+                  <DropDown
+                    options={voteIntervalOptions}
+                    onSelect={(value) => intervalField.onChange(value)}
+                    name={'voteInterval'}
+                    value={intervalField.value}
+                  />
+                )}
+              />
+            </SettingSection>
+          )}
+        />
       </section>
     </fieldset>
   );

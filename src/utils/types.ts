@@ -53,6 +53,16 @@ export interface PollOption {
   pollId: string;
 }
 
+export type AddPollOptionDraft = {
+  title: string;
+  file: string | null;
+};
+
+export type AddPollRequest = Omit<Poll, 'options' | 'creatorId' | 'creator'> & {
+  creatorId?: string;
+  options: AddPollOptionDraft[];
+};
+
 export enum PollType {
   MULTIPLE = 'MULTIPLE',
   IMAGE = 'IMAGE',

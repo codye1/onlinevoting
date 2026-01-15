@@ -5,7 +5,8 @@ import arrowLeft from '@public/arrowLeft.svg';
 import refresh from '@public/refresh.svg';
 import ResultsMenu from './components/ResultsMenu.tsx';
 import { useGetPollResultsQuery } from '../../reducer/api.ts';
-import getErrorMessage from '../../utils/getErrorMessage.ts';
+import Error from '@components/Error.tsx';
+import PollResultsSkeleton from './components/PollResultsSkeleton.tsx';
 
 const PollResults = () => {
   const navigate = useNavigate();
@@ -25,11 +26,13 @@ const PollResults = () => {
   };
 
   console.log(poll);
+  if (isLoading) {
+    return <PollResultsSkeleton />;
+  }
 
   return (
     <div className="bg-foreground shadow-m rounded p-[20px] max-w-[765px] m-auto">
-      {isLoading && <div>Завантаження...</div>}
-      {error && <div>Помилка: {getErrorMessage(error)}</div>}
+      {error && <Error error={error} />}
 
       {poll && (
         <>

@@ -1,21 +1,25 @@
-import { Dispatch, useState } from 'react';
-import TextArea from '@components/TextArea';
+import { useState } from 'react';
 import img from '@public/img.svg';
 import plus from '@public/plus.svg';
 import Modal from '@components/Modal';
 import ImageUploadInput from '@components/ImageUploadInput';
 import MyButton from '@components/MyButton';
+import { Control, Controller } from 'react-hook-form';
+import type { AddPollFormValues } from '../../AddPollModal.tsx';
+import TextArea from '@components/TextArea.tsx';
 
 interface IDescription {
-  setDescriptionImg: Dispatch<React.SetStateAction<string | undefined>>;
-  descriptionImg?: string;
-  errors?: string[];
+  control: Control<AddPollFormValues>;
+  descriptionError?: string[];
+  image: string;
+  setImage: (url: string) => void;
 }
 
 const Description = ({
-  setDescriptionImg,
-  descriptionImg,
-  errors,
+  control,
+  descriptionError,
+  image,
+  setImage,
 }: IDescription) => {
   const [hideDescription, setHideDescription] = useState(true);
 
@@ -37,20 +41,29 @@ const Description = ({
 
   return (
     <>
-      <TextArea
-        name={'description'}
-        placeholder={'Введіть опис'}
-        label={'Опис'}
-        errors={errors}
+      <Controller
+        name="description"
+        control={control}
+        render={({ field }) => (
+          <TextArea
+            label="Опис"
+            name="description"
+            placeholder="Введіть опис"
+            errors={descriptionError}
+            value={field.value}
+            onChange={(e) => field.onChange(e.target.value)}
+          />
+        )}
       />
-      <div className={'flex justify-between p-[5px] flex-col'}>
-        {descriptionImg ? (
-          <img src={descriptionImg} alt="" />
+      <div className={'flex justify-between flex-col'}>
+        {image ? (
+          <img src={image} alt="" />
         ) : (
           <MyButton
             icon={img}
             label={'Додати фото'}
             type={'button'}
+            className="mt-[5px]"
             onClick={() => {
               setModalUploadImageOpen(true);
             }}
@@ -65,12 +78,12 @@ const Description = ({
           Приховати опис
         </p>
         {modalUploadImageOpen && (
-          <Modal close={() => setModalUploadImageOpen(false)}>
+          <Modal close={() => setModalUploadImageOpen(false)} inner={true}>
             <div className={'p-[20px]'}>
               <ImageUploadInput
                 name={'image'}
                 onImagesChange={(url) => {
-                  setDescriptionImg(url[0]);
+                  setImage(url[0]);
                   setModalUploadImageOpen(false);
                 }}
                 maxImages={1}
@@ -79,7 +92,6 @@ const Description = ({
           </Modal>
         )}
       </div>
-      <input type={'hidden'} value={descriptionImg} name={'image'} />
     </>
   );
 };

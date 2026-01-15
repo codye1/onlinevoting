@@ -13,7 +13,8 @@
       "@public/*": ["src/public/*"],
       "@utils/*": ["src/utils/*"],
       "@actions/*": ["src/actions/*"],
-      "@hooks/*": ["src/hooks/*"]
+      "@hooks/*": ["src/hooks/*"],
+      "@reducer/*": ["src/reducer/*"]
     },
 
     /* Bundler mode */

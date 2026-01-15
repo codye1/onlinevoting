@@ -1,13 +1,16 @@
-import PollsList, { PollItem } from '@components/PollsList';
 import drop from '@public/dropDown.svg';
 import { QueryParams } from '../../Home';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
+import Error from '@components/Error';
+import { IPollItem } from '@components/PollsList/PollItem';
+import PollsList from '@components/PollsList/PollsList';
+import SkeletonPollsList from '@components/SkeletonPollsList/SkeletonPollsList';
 
 interface PollsData {
   queryParams: QueryParams;
   setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>;
-  data: PollItem[];
+  data: IPollItem[];
   sentinelRef: React.RefObject<HTMLDivElement | null>;
   isLoading: boolean;
   isFetching: boolean;
@@ -41,8 +44,9 @@ const HomePollsList = ({ polls }: IHomePollsList) => {
     }));
   };
 
-  if (isLoading) return <div>Завантаження...</div>;
-  if (error) return <div>Помилка завантаження опитувань</div>;
+  if (error) {
+    return <Error error={error} />;
+  }
 
   return (
     <>
@@ -65,9 +69,9 @@ const HomePollsList = ({ polls }: IHomePollsList) => {
         <span className="w-[100px] text-center">Статус</span>
       </div>
 
-      <PollsList polls={data} />
+      {isLoading ? <SkeletonPollsList /> : <PollsList polls={data} />}
 
-      {isFetching && <div>Завантаження...</div>}
+      {isFetching && <SkeletonPollsList />}
 
       <div className="height-[10px]" ref={sentinelRef} />
     </>

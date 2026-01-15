@@ -4,6 +4,7 @@ import { FormEvent, startTransition, useActionState } from 'react';
 import signup from '@actions/signup.ts';
 import { useAppSelector } from '@hooks/hooks.tsx';
 import { inputTypes } from '@utils/types.ts';
+import Errors from '@components/Errors';
 
 interface SignupForm {
   onHaveAccount: () => void;
@@ -46,9 +47,7 @@ const Signup = ({ onHaveAccount }: SignupForm) => {
         name={'confirmPassword'}
         errors={state?.errors.confirmPassword}
       />
-      <p className={'text-start text-sm text-red-500 font-light'}>
-        {state?.errors.auth}
-      </p>
+      {state?.errors.auth && <Errors errors={state.errors.auth} />}
       <MyButton
         label={'Зареєструватися '}
         type={'submit'}

@@ -4,6 +4,7 @@ import { FormEvent, startTransition, useActionState } from 'react';
 import { useAppSelector } from '@hooks/hooks.tsx';
 import TextInput from '@components/TextInput.tsx';
 import { inputTypes } from '@utils/types.ts';
+import Errors from '@components/Errors';
 
 interface LoginForm {
   onHaveAccount: () => void;
@@ -42,9 +43,7 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
         type={inputTypes.password}
         errors={state?.errors.password}
       />
-      <p className={'text-start text-red-500 text-sm font-light'}>
-        {state?.errors.auth}
-      </p>
+      {state?.errors.auth && <Errors errors={state.errors.auth} />}
       <MyButton type={'submit'} label={'Вхід'} isLoading={isLoading} />
 
       <p className={'mt-[30px] text-base font-light'}>
