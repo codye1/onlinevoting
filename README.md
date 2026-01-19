@@ -1,54 +1,76 @@
-# React + TypeScript + Vite
+# Online Voting
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for an online voting service: browse polls, create polls (text options / image options), vote, and view results.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 19 + TypeScript
+- Vite 6
+- Tailwind CSS 4
+- Redux Toolkit + RTK Query
+- React Hook Form + Zod
 
-## Expanding the ESLint configuration
+## Quick Start
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1) Install dependencies:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+`npm i`
+
+2) Create a `.env.local` file in the project root:
+
+```bash
+VITE_API_BASE_URL=http://localhost:3000
+VITE_IMGBB_API_KEY=your_imgbb_key
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3) Start the dev server:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+`npm run dev`
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Open `http://localhost:5173`.
+
+## Environment Variables
+
+- `VITE_API_BASE_URL` — backend base URL (defaults to `http://localhost:3000`).
+- `VITE_IMGBB_API_KEY` — ImgBB API key used for image uploads.
+
+## Scripts
+
+- `npm run dev` — run the app in development mode.
+- `npm run build` — TypeScript build + Vite production build.
+- `npm run preview` — preview the production build.
+- `npm run lint` / `npm run lint:fix` — run ESLint / auto-fix issues.
+- `npm run format` — format `./src` with Prettier.
+
+## Routes
+
+- `/` — home (polls list).
+- `/auth` — login / signup.
+- `/poll/:id` — poll page.
+- `/poll/:id/results` — poll results.
+
+## API (Expected Endpoints)
+
+The client uses RTK Query and expects the following backend endpoints (see [src/reducer/api.ts](src/reducer/api.ts)):
+
+- `POST /login`
+- `POST /register`
+- `POST /refresh`
+- `POST /logout`
+- `GET /polls` (with query params for filtering/pagination)
+- `POST /polls` (create poll)
+- `GET /polls/:pollId`
+- `POST /polls/:pollId/votes`
+- `GET /polls/:pollId/results`
+
+Auth notes:
+- `Authorization: Bearer <token>` is read from `localStorage`.
+- `credentials: 'include'` is enabled (useful if refresh relies on cookies).
+
+## Structure
+
+- `src/pages` — pages (`Home`, `Auth`, `Poll`, `PollResults`).
+- `src/components` — reusable UI components.
+- `src/reducer` — store/slices + RTK Query API.
+- `src/rout` — routing config.
+- `src/public` — SVG/icons.

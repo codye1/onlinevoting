@@ -57,7 +57,6 @@ interface ImgBBResponse {
   status: number;
 }
 
-// ImgBB API key (replace with your actual key)
 const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
