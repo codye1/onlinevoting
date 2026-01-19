@@ -16,7 +16,7 @@ const Error = ({ error, className }: IError) => {
 
   return (
     <section
-      className={`${className} bg-opacity-10 bg-danger/50 bg-opacity-10 rounded-md p-[20px] shadow-sm `}
+      className={`${className} bg-opacity-10 bg-danger/50 rounded-md p-[20px] shadow-sm `}
     >
       <img
         src={errorIcon}

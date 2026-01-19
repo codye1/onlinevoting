@@ -12,6 +12,7 @@ import Modal from '@components/Modal.tsx';
 import MyButton from '@components/MyButton.tsx';
 import Error from '@components/Error.tsx';
 import ScrollXControls from '@components/ScrollXControls.tsx';
+import { useNavigate } from 'react-router-dom';
 
 interface IHomeHeader {
   queryParams: QueryParams;
@@ -27,7 +28,7 @@ const HomeHeader = ({
   const [openModal, setOpenModal] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
   const isAuth = useAppSelector((state) => state.auth.isAuth);
-
+  const navigate = useNavigate();
   const filterOptionsWithDisabled = filterOptions.map((opt) => ({
     ...opt,
     disabled:
@@ -136,7 +137,7 @@ const HomeHeader = ({
           <MyButton
             label="Ввійти"
             type="button"
-            onClick={() => (window.location.href = '/auth')}
+            onClick={() => navigate('/auth')}
             className={'mt-[20px]'}
           />
         </Modal>

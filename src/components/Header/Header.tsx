@@ -3,14 +3,23 @@ import logoutIcon from '@public/logout.svg';
 import loginIcon from '@public/login.svg';
 import { useAppSelector } from '@hooks/hooks';
 import ThemeSwitcher from './ThemeSwitcher/ThemeSwitcher';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const [logout] = useLogoutMutation();
+  const navigate = useNavigate();
 
   return (
     <header className="flex justify-between h-[50px] items-center text-2xl">
-      <a href="/">Online Voting</a>
+      <a
+        onClick={(e) => {
+          e.preventDefault();
+          navigate('/');
+        }}
+      >
+        Online Voting
+      </a>
 
       <section className="flex items-center height-full">
         <ThemeSwitcher />
@@ -37,7 +46,7 @@ const Header = () => {
             src={loginIcon}
             alt={'Login'}
             onClick={() => {
-              window.location.href = '/auth';
+              navigate('/auth');
               return;
             }}
           />
