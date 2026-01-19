@@ -1,4 +1,4 @@
-import DropDown from '@components/DropDown.tsx';
+import DropDown from '@components/DropDown/DropDown.tsx';
 import SettingSection from '@components/SettingSection.tsx';
 import DateTimePicker from 'react-datetime-picker';
 
@@ -8,8 +8,8 @@ import {
   voteIntervalOptions,
 } from '../../../../../../constants.ts';
 import { Control, Controller } from 'react-hook-form';
-import type { AddPollFormValues } from '../../AddPollModal.tsx';
 import Errors from '@components/Errors.tsx';
+import { AddPollFormValues } from '../../lib/types.ts';
 
 interface ISettings {
   control: Control<AddPollFormValues>;

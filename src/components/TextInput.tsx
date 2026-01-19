@@ -44,7 +44,7 @@ const TextInput = ({
         {button && (
           <img
             className={
-              'w-[40px] h-[40px] absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer'
+              'w-[40px] h-[40px] absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer icon-bw'
             }
             src={button.icon}
             onClick={button.onClick}

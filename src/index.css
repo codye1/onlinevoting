@@ -9,6 +9,10 @@
 }
 
 @layer base {
+  * {
+    @apply box-border;
+  }
+
   html {
     @apply font-sans;
     line-height: 1.5;
@@ -16,7 +20,22 @@
     color-scheme: light dark;
   }
 
+  body.loading * {
+    cursor: wait !important;
+  }
+
   :root {
+    --c-dark: 0.1 0 264;
+    --c-foreground: 0.23 0 264;
+    --c-light: 0.3 0 264;
+    --c-hover: 0.35 0 264;
+    --c-focus: 0.4 0 264;
+    --c-border: 0.3 0 20;
+    --c-default: 0.96 0 20;
+    --c-muted: 0.76 0 20;
+    --c-danger: 0.65 0.2 25;
+    --c-success: 0.65 0.16 145;
+
     @apply bg-dark text-default antialiased flex justify-center items-center;
 
     margin: auto;
@@ -25,12 +44,48 @@
     padding: 0 30px;
   }
 
+  html[data-theme='light'] {
+    color-scheme: light;
+
+    --c-dark: 0.92 0 20;
+    --c-foreground: 0.96 0 20;
+    --c-light: 1 0 20;
+    --c-hover: 0.84 0 20;
+    --c-focus: 0.8 0 20;
+    --c-border: 0.82 0 20;
+    --c-default: 0.15 0 20;
+    --c-muted: 0.45 0 20;
+    --c-danger: 0.6 0.2 25;
+    --c-success: 0.55 0.16 145;
+  }
+
+  html[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
   input:focus,
   textarea:focus {
     @apply outline-none bg-border;
   }
 }
 
+@layer utilities {
+  .icon-bw {
+    filter: none;
+  }
+
+  html[data-theme='light'] .icon-bw {
+    filter: brightness(0);
+  }
+
+  .icon-filter-black {
+    filter: brightness(0);
+  }
+
+  .icon-filter-white {
+    filter: brightness(0) invert(1);
+  }
+}
 
 /* HTML: <div class="loader"></div> */
 .loader {

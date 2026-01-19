@@ -7,10 +7,10 @@ import type {
 } from '@reduxjs/toolkit/query';
 
 import { Vote } from '../pages/Poll/Poll.tsx';
-import { PollItem } from '@components/PollsList.tsx';
 import { Poll, PollOption } from '../utils/types.ts';
 import { AddPollRequest } from '../utils/types.ts';
 import { QueryParams } from 'src/pages/Home/Home.tsx';
+import { IPollItem } from '@components/PollsList/PollItem.tsx';
 
 interface PollResponse extends Poll {
   id: string;
@@ -161,7 +161,7 @@ export const apiSlice = createApi({
       transformResponse: (response: { poll: PollResultsResponse }) =>
         response.poll,
     }),
-    getPolls: builder.query<PollsResponse<PollItem>, QueryParams>({
+    getPolls: builder.query<PollsResponse<IPollItem>, QueryParams>({
       query: (params) => ({
         url: 'polls',
         method: 'GET',
@@ -171,7 +171,7 @@ export const apiSlice = createApi({
           return text ? (JSON.parse(text) as unknown) : null;
         },
       }),
-      transformResponse: (response: PollsResponse<PollItem> | null) => ({
+      transformResponse: (response: PollsResponse<IPollItem> | null) => ({
         polls: response?.polls ?? [],
         nextCursor: response?.nextCursor ?? null,
         hasMore: response?.hasMore ?? false,

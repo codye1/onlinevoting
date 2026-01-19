@@ -6,7 +6,6 @@ import Auth from '../pages/Auth/Auth.tsx';
 const Routing = () => {
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const location = useLocation();
-  const redirectUrl = encodeURIComponent(location.pathname + location.search);
 
   const authRedirectTarget = (() => {
     const params = new URLSearchParams(location.search);
@@ -34,21 +33,11 @@ const Routing = () => {
         }
       />
 
-      {isAuth ? (
-        <>
-          {routPages.map((route, index) => (
-            <Route key={index} path={route.path} element={<route.element />} />
-          ))}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </>
-      ) : (
-        <>
-          <Route
-            path="*"
-            element={<Navigate to={`/auth?url=${redirectUrl}`} replace />}
-          />
-        </>
-      )}
+      {routPages.map((route, index) => (
+        <Route key={index} path={route.path} element={<route.element />} />
+      ))}
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

@@ -2,6 +2,8 @@ import formatDate from '@utils/formatDate';
 import { PollType } from '@utils/types';
 import multiple from '@public/iconMultiple.svg';
 import img from '@public/iconImg.svg';
+import participants from '@public/participants.svg';
+import deadlineIcon from '@public/deadline.svg';
 
 export interface IPollItem {
   id: string;
@@ -25,16 +27,16 @@ const PollItem = ({
   onClick,
 }: IPollItem) => {
   const isLive = !expireAt || new Date(expireAt) > new Date();
-
+  const deadline = expireAt ? formatDate(expireAt) : null;
   return (
     <div
       key={id}
-      className="w-full shadow-m  rounded p-[20px] mt-[15px] bg-foreground hover:bg-hover cursor-pointer flex items-center justify-between"
+      className="w-full shadow-m  rounded p-[20px] mt-[15px] bg-foreground hover:bg-hover cursor-pointer flex items-center justify-between  max-sm:flex-col max-sm:items-start"
       onClick={onClick}
     >
       <div className="flex items-center">
         <img
-          className="w-[40px] h-[40px] mr-[10px]"
+          className="w-[40px] h-[40px] mr-[10px] icon-bw"
           src={type === PollType.IMAGE ? img : multiple}
           alt=""
         />
@@ -46,9 +48,24 @@ const PollItem = ({
         </span>
       </div>
 
-      <div className="flex items-center">
-        <span className="w-[100px] text-center">{votes}</span>
-        <span className="w-[100px] text-center">
+      <div className="flex items-center max-sm:mt-[20px] max-sm:justify-between max-sm:w-full">
+        <span className="w-[100px] text-center height-[30px] flex items-center justify-center">
+          <img
+            src={participants}
+            alt="Participants"
+            className="mr-[5px] w-[20px] h-[20px] sm:hidden icon-bw"
+          />
+
+          {votes}
+        </span>
+        <span
+          className={`w-[100px] text-center height-[30px] flex items-center justify-center ${deadline ? '' : 'max-sm:hidden'}`}
+        >
+          <img
+            src={deadlineIcon}
+            alt="Deadline"
+            className="mr-[5px] w-[20px] h-[20px] sm:hidden icon-bw"
+          />
           {expireAt ? formatDate(expireAt) : '-'}
         </span>
         <span className="w-[100px] text-center flex items-center justify-center">

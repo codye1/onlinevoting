@@ -6,6 +6,10 @@ import Error from '@components/Error';
 import { IPollItem } from '@components/PollsList/PollItem';
 import PollsList from '@components/PollsList/PollsList';
 import SkeletonPollsList from '@components/SkeletonPollsList/SkeletonPollsList';
+import participants from '@public/participants.svg';
+import deadline from '@public/deadline.svg';
+import pollIcon from '@public/poll.svg';
+import status from '@public/status.svg';
 
 interface PollsData {
   queryParams: QueryParams;
@@ -41,6 +45,7 @@ const HomePollsList = ({ polls }: IHomePollsList) => {
           : prev.sortByVotes === 'desc'
             ? undefined
             : 'asc',
+      cursor: null,
     }));
   };
 
@@ -50,30 +55,56 @@ const HomePollsList = ({ polls }: IHomePollsList) => {
 
   return (
     <>
-      <div className="flex justify-between items-center px-[20px] py-[10px]  font-semibold">
-        <span className="flex-1">Опитування</span>
+      <div className="flex justify-between items-center px-[20px] py-[10px]  font-semibold max-sm:hidden">
+        <span className="flex-1 flex items-center">
+          <img
+            className="w-[20px] h-[20px] mr-[5px] icon-bw"
+            src={pollIcon}
+            alt=""
+          />
+          Опитування
+        </span>
         <span
           className="w-[100px] text-center flex items-center"
           onClick={() => handleSortByVotesChange()}
         >
+          <img
+            className="w-[20px] h-[20px] mr-[5px] icon-bw"
+            src={participants}
+            alt=""
+          />
           Учасники
           {queryParams.sortByVotes && (
             <img
-              className={`w-[20px] h-[20px] ${queryParams.sortByVotes == 'asc' && 'rotate-180'}`}
+              className={`w-[20px] h-[20px] icon-bw ${queryParams.sortByVotes == 'asc' && 'rotate-180'}`}
               src={drop}
               alt=""
             />
           )}
         </span>
-        <span className="w-[100px] text-center">Дедлайн</span>
-        <span className="w-[100px] text-center">Статус</span>
+        <span className="w-[100px] text-center flex items-center">
+          <img
+            className="w-[20px] h-[20px] mr-[5px] icon-bw"
+            src={deadline}
+            alt=""
+          />
+          Дедлайн
+        </span>
+        <span className="w-[100px] text-center flex items-center">
+          <img
+            className="w-[20px] h-[20px] mr-[5px] icon-bw"
+            src={status}
+            alt=""
+          />
+          Статус
+        </span>
       </div>
 
       {isLoading ? <SkeletonPollsList /> : <PollsList polls={data} />}
 
       {isFetching && <SkeletonPollsList />}
 
-      <div className="height-[10px]" ref={sentinelRef} />
+      <div ref={sentinelRef} />
     </>
   );
 };

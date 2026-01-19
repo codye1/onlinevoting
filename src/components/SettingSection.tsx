@@ -31,7 +31,7 @@ const SettingSection = ({
       {checked && (
         <div className={'flex h-[40px] items-center '}>
           <img
-            className={'w-[20px] h-[20px] rotate-180 mr-[10px]'}
+            className={'w-[20px] h-[20px] rotate-180 mr-[10px] icon-bw'}
             src={pointer}
             alt=""
           />

@@ -1,5 +1,4 @@
 import description from '@public/description.svg';
-import OptionsList from './components/OptionsList.tsx';
 import MyButton from '@components/MyButton.tsx';
 import arrow from '@public/arrow.svg';
 import results from '@public/results.svg';
@@ -9,6 +8,8 @@ import { useState } from 'react';
 import { useGetPollQuery, useVoteMutation } from '../../reducer/api.ts';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Error from '@components/Error.tsx';
+import OptionsList from './components/OptionsList/OptionsList.tsx';
+import { useAppSelector } from '@hooks/hooks.tsx';
 
 export interface Vote {
   optionId: string;
@@ -19,6 +20,7 @@ const Poll = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
   const { data, isLoading, error } = useGetPollQuery(
     { pollId: id! },
     { skip: !id },
@@ -56,7 +58,7 @@ const Poll = () => {
       <section className={'mt-[20px] flex font-normal'}>
         {data.description && (
           <img
-            className={'w-[20px] h-[20px] mr-[10px]'}
+            className={'w-[20px] h-[20px] mr-[10px] icon-bw'}
             src={description}
             alt=""
           />
@@ -82,11 +84,11 @@ const Poll = () => {
         <div className={'flex'}>
           <MyButton
             label={'Проголосувати'}
+            isDisabled={!isAuth}
             type={'button'}
             isLoading={voteLoading}
             onClick={async () => {
               if (userVote !== null) {
-                console.log(userVote);
                 await vote({
                   optionId: userVote,
                   pollId: id!,

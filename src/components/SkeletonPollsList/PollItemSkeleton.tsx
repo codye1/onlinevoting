@@ -5,7 +5,7 @@ const highlightColor = '#3b3b3b';
 
 const PollItemSkeleton = () => {
   return (
-    <div className="w-full shadow-m rounded p-[20px] mt-[15px] bg-foreground flex items-center justify-between">
+    <div className="w-full shadow-m rounded p-[20px] mt-[15px] bg-foreground flex items-center justify-between max-sm:flex-col max-sm:items-start">
       <div className="flex items-center">
         <div className="w-[40px] h-[40px] mr-[10px] flex items-center justify-center">
           <Skeleton
@@ -37,8 +37,17 @@ const PollItemSkeleton = () => {
         </span>
       </div>
 
-      <div className="flex items-center">
-        <span className="w-[100px] text-center">
+      <div className="flex items-center max-sm:mt-[20px] max-sm:justify-between max-sm:w-full">
+        <span className="w-[100px] text-center height-[30px] flex items-center justify-center">
+          <span className="mr-[5px] sm:hidden">
+            <Skeleton
+              circle
+              width={20}
+              height={20}
+              baseColor={baseColor}
+              highlightColor={highlightColor}
+            />
+          </span>
           <Skeleton
             width={40}
             height={18}
@@ -46,7 +55,17 @@ const PollItemSkeleton = () => {
             highlightColor={highlightColor}
           />
         </span>
-        <span className="w-[100px] text-center">
+
+        <span className="w-[100px] text-center height-[30px] flex items-center justify-center">
+          <span className="mr-[5px] sm:hidden">
+            <Skeleton
+              circle
+              width={20}
+              height={20}
+              baseColor={baseColor}
+              highlightColor={highlightColor}
+            />
+          </span>
           <Skeleton
             width={70}
             height={18}
@@ -54,6 +73,7 @@ const PollItemSkeleton = () => {
             highlightColor={highlightColor}
           />
         </span>
+
         <span className="w-[100px] text-center flex items-center justify-center gap-2">
           <Skeleton
             circle

@@ -25,13 +25,12 @@ const PollResults = () => {
     }
   };
 
-  console.log(poll);
   if (isLoading) {
     return <PollResultsSkeleton />;
   }
 
   return (
-    <div className="bg-foreground shadow-m rounded p-[20px] max-w-[765px] m-auto">
+    <menu className="bg-foreground shadow-m rounded p-[20px] max-w-[765px] m-auto">
       {error && <Error error={error} />}
 
       {poll && (
@@ -61,7 +60,7 @@ const PollResults = () => {
           </div>
         </>
       )}
-    </div>
+    </menu>
   );
 };
 

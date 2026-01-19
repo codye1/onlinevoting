@@ -23,8 +23,6 @@ function App() {
   }, [refresh]);
 
   useEffect(() => {
-    console.log('Refresh token response:', { data, isSuccess, isError });
-
     if (isSuccess && data) {
       const decoded = jwtDecode<DecodedToken>(data.accessToken);
       console.log('Decoded token:', decoded);

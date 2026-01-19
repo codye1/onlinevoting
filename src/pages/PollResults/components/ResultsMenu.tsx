@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import { PollResultsResponse } from '../../../reducer/api';
 import { PollType } from '@utils/types';
+import ImageOption from './ImageOption';
+import MultipleOption from './MultipleOption';
 
 interface EnhancedOption {
   title: string;
@@ -47,10 +49,9 @@ const ResultsMenu = ({ poll }: IResultsMenu) => {
       };
     },
   );
-  const hasImages = poll.type === PollType.IMAGE;
 
   useEffect(() => {
-    if (!hasImages && chartRef.current) {
+    if (poll.type !== PollType.IMAGE && chartRef.current) {
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
         if (chartInstance.current) {
@@ -87,79 +88,22 @@ const ResultsMenu = ({ poll }: IResultsMenu) => {
         chartInstance.current.destroy();
       }
     };
-  }, [hasImages]);
+  }, [poll.type]);
 
   return (
     <menu className="space-y-8">
-      {hasImages ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-base sm:text-base">
+      {poll.type === PollType.IMAGE && (
+        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-6 text-base sm:text-base">
           {optionsWithPercent.map((option, index) => (
-            <div key={index} className="relative mt-3">
-              <div
-                className={`absolute rounded-b-md z-20 opacity-30 bottom-0 left-0 right-0 ${
-                  option.percentValue === 100 ? 'rounded-t-md' : ''
-                }`}
-                style={{
-                  height: `${option.percent}%`,
-                  backgroundColor: option.color,
-                }}
-              ></div>
-              <div className="absolute bottom-12 left-0 right-0 flex items-center justify-center text-center z-20">
-                <div className="rounded-md bg-light px-2 py-1 text-white shadow-s">
-                  <div className="text-base sm:text-lg font-medium">
-                    {option.percent} %
-                  </div>
-                  <div>({option.votes} голосів)</div>
-                </div>
-              </div>
-              <div className="flex flex-col justify-between h-full rounded-md shadow-m">
-                <div className="flex flex-grow h-48 px-3 py-2 mx-auto">
-                  {option.file && (
-                    <img
-                      className="object-contain"
-                      src={option.file}
-                      alt={option.title}
-                    />
-                  )}
-                </div>
-                <div className="flex items-center h-10 mt-2 px-3 py-2 justify-center border-t border-border truncate">
-                  <span className="truncate">{option.title}</span>
-                </div>
-              </div>
-            </div>
+            <ImageOption option={option} key={index} />
           ))}
         </div>
-      ) : (
+      )}
+      {poll.type == PollType.MULTIPLE && (
         <div className="md:flex items-start">
           <div className="flex-grow">
             {optionsWithPercent.map((option, index) => (
-              <div key={index} className="mb-3">
-                <div className="flex items-center">
-                  <div className="flex-grow flex items-center text-lg sm:text-base">
-                    <span>{option.title}</span>
-                  </div>
-                  <div className="whitespace-nowrap ml-4">
-                    <span>{option.percent}%</span>
-                    <span> ({option.votes} голосів)</span>
-                  </div>
-                </div>
-                <div className="relative overflow-hidden rounded-lg border border-[#808080] mt-1">
-                  <div
-                    className="bg-[#808080]"
-                    style={{ height: '18px' }}
-                  ></div>
-                  {option.percentValue > 0 && (
-                    <div
-                      className="rounded-r-lg absolute top-0"
-                      style={{
-                        height: '18px',
-                        width: `${option.percent}%`,
-                        backgroundColor: option.color,
-                      }}
-                    ></div>
-                  )}
-                </div>
-              </div>
+              <MultipleOption option={option} key={index} />
             ))}
           </div>
           <div className="flex-shrink-0 relative">

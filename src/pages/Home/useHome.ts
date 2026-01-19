@@ -1,8 +1,8 @@
-import { PollItem } from '@components/PollsList';
 import { Category } from '@utils/types';
 import { useEffect, useRef, useState } from 'react';
 import { QueryParams } from './Home';
 import { useGetPollsQuery } from '../../reducer/api';
+import { IPollItem } from '@components/PollsList/PollItem';
 
 const useHome = () => {
   const [queryParams, setQueryParams] = useState<QueryParams>({
@@ -13,16 +13,19 @@ const useHome = () => {
     cursor: null,
   });
 
-  const [polls, setPolls] = useState<PollItem[]>([]);
+  const [polls, setPolls] = useState<IPollItem[]>([]);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const cursorRef = useRef<QueryParams['cursor']>(queryParams.cursor);
 
   const { data, error, isLoading, isFetching, refetch } =
     useGetPollsQuery(queryParams);
 
   useEffect(() => {
+    cursorRef.current = queryParams.cursor;
+  }, [queryParams.cursor]);
+
+  useEffect(() => {
     setPolls([]);
-    setQueryParams((prev) => ({ ...prev, cursor: null }));
-    console.log('Query params changed:', queryParams);
   }, [
     queryParams.filter,
     queryParams.search,
@@ -34,7 +37,7 @@ const useHome = () => {
     if (!data) return;
 
     setPolls((prev) =>
-      queryParams.cursor ? [...prev, ...data.polls] : data.polls,
+      cursorRef.current ? [...prev, ...data.polls] : data.polls,
     );
   }, [data]);
 

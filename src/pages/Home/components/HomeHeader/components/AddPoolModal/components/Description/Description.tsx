@@ -5,8 +5,8 @@ import Modal from '@components/Modal';
 import ImageUploadInput from '@components/ImageUploadInput';
 import MyButton from '@components/MyButton';
 import { Control, Controller } from 'react-hook-form';
-import type { AddPollFormValues } from '../../AddPollModal.tsx';
 import TextArea from '@components/TextArea.tsx';
+import { AddPollFormValues } from '../../lib/types';
 
 interface IDescription {
   control: Control<AddPollFormValues>;
@@ -28,12 +28,14 @@ const Description = ({
   if (hideDescription) {
     return (
       <p
-        className={
-          'text-base cursor-pointer m-[5px] mt-[10px] font-light opacity-50 flex items-center'
-        }
+        className="text-base cursor-pointer m-[5px] mt-[10px] font-light opacity-50 flex items-center"
         onClick={() => setHideDescription(false)}
       >
-        <img className={'w-[10px] h-[10px] mr-[10px]'} src={plus} alt="" />
+        <img
+          className="w-[10px] h-[10px] mr-[10px] icon-bw"
+          src={plus}
+          alt=""
+        />
         Добавити опис або фото
       </p>
     );
@@ -51,7 +53,7 @@ const Description = ({
             placeholder="Введіть опис"
             errors={descriptionError}
             value={field.value}
-            onChange={(e) => field.onChange(e.target.value)}
+            onChange={(e) => field.onChange(e.target.value.trim())}
           />
         )}
       />

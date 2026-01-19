@@ -11,7 +11,7 @@ const Errors = ({ errors }: { errors: string[] }) => {
           <img
             src={errorIcon}
             alt="error"
-            className="inline mr-1 w-[16px] h-[16px]"
+            className="inline mr-1 w-[16px] h-[16px] icon-bw"
           />
           {error}
         </li>

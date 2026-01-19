@@ -10,7 +10,7 @@ import type {
   UseFieldArrayRemove,
 } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-import type { AddPollFormValues } from '../../../AddPollModal.tsx';
+import type { AddPollFormValues } from '../../../lib/types';
 
 type OptionField = FieldArrayWithId<AddPollFormValues, 'options', 'id'>;
 

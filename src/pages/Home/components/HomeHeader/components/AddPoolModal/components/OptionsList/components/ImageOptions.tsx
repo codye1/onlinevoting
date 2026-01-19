@@ -10,7 +10,7 @@ import type {
   UseFieldArrayRemove,
 } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-import type { AddPollFormValues } from '../../../AddPollModal.tsx';
+import type { AddPollFormValues } from '../../../lib/types';
 
 type OptionField = FieldArrayWithId<AddPollFormValues, 'options', 'id'>;
 
@@ -77,7 +77,7 @@ const ImageOptions = ({ control, fields, append, remove }: IImageOptions) => {
             onClick={() => remove(index)}
             className="absolute right-0 top-0  cursor-pointer"
           >
-            <img className={'w-[20px] h-[20px]'} src={close} alt="" />
+            <img className={'w-[20px] h-[20px] icon-bw'} src={close} alt="" />
           </button>
         </div>
       ))}

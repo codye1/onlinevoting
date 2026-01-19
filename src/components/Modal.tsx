@@ -31,7 +31,7 @@ const Modal = ({ children, close, inner }: ModalProps) => {
           className="absolute top-4 right-4 cursor-pointer"
           aria-label="Close modal"
         >
-          <img src={closeIcon} alt="Close" className="w-6 h-6" />
+          <img src={closeIcon} alt="Close" className="w-6 h-6 icon-bw" />
         </button>
         {children}
       </div>

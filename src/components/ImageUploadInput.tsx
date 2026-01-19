@@ -105,7 +105,7 @@ const ImageUploadInput = ({
           ) : (
             <div className="flex justify-center">
               <img
-                className={'h-[15px] w-[15px] opacity-25'}
+                className={'h-[15px] w-[15px] opacity-25 icon-bw'}
                 src={plus}
                 alt=""
               />

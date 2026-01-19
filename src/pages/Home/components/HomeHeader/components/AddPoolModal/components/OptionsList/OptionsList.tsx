@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import DropDown from '@components/DropDown.tsx';
+import DropDown from '@components/DropDown/DropDown.tsx';
 import Error from '@components/Error.tsx';
 import Errors from '@components/Errors.tsx';
 import { typeOptions } from '../../../../../../constants.ts';
@@ -11,9 +11,11 @@ import {
   useFieldArray,
   useWatch,
 } from 'react-hook-form';
-import type { AddPollFormValues, OptionDraft } from '../../AddPollModal.tsx';
+
 import MultipleOptions from './components/MultipleOptions.tsx';
 import ImageOptions from './components/ImageOptions.tsx';
+import { AddPollFormValues } from '../../lib/types.ts';
+import ensureMultipleDefaults from '../../lib/ensureMultipleDefaults.ts';
 
 interface IOptionsList {
   control: Control<AddPollFormValues>;
@@ -21,15 +23,6 @@ interface IOptionsList {
   optionsErrors?: string[];
   optionSchemaErrorMessage?: string;
 }
-
-const ensureMultipleDefaults = (options: OptionDraft[]) => {
-  if (options.length >= 2) return options;
-  if (options.length === 1) return [...options, { file: null, title: '' }];
-  return [
-    { file: null, title: '' },
-    { file: null, title: '' },
-  ];
-};
 
 const OptionsList = ({
   control,

@@ -1,7 +1,15 @@
 // tailwind.config.js
+import defaultTheme from 'tailwindcss/defaultTheme';
+
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
+    screens: {
+      ...defaultTheme.screens,
+      md: '745px',
+      sm: '560px',
+      xs: '500px',
+    },
     extend: {
       fontFamily: {
         sans: ['Oswald', 'sans-serif'],
@@ -15,16 +23,16 @@ export default {
         m: '0 0 6px',
       },
       colors: {
-        dark: 'oklch(0.1 0 264)',
-        foreground: 'oklch(0.23 0 264)',
-        light: 'oklch(0.3 0 264)',
-        hover: 'oklch(0.35 0 264)',
-        focus: 'oklch(0.4 0 264)',
-        border: 'oklch(0.30 0 20)',
-        default: 'oklch(0.96 0 20)',
-        muted: 'oklch(0.76 0 20)',
-        danger: 'oklch(0.65 0.20 25)',
-        success: 'oklch(0.65 0.16 145)',
+        dark: 'oklch(var(--c-dark) / <alpha-value>)',
+        foreground: 'oklch(var(--c-foreground) / <alpha-value>)',
+        light: 'oklch(var(--c-light) / <alpha-value>)',
+        hover: 'oklch(var(--c-hover) / <alpha-value>)',
+        focus: 'oklch(var(--c-focus) / <alpha-value>)',
+        border: 'oklch(var(--c-border) / <alpha-value>)',
+        default: 'oklch(var(--c-default) / <alpha-value>)',
+        muted: 'oklch(var(--c-muted) / <alpha-value>)',
+        danger: 'oklch(var(--c-danger) / <alpha-value>)',
+        success: 'oklch(var(--c-success) / <alpha-value>)',
       },
     },
 
