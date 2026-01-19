@@ -99,7 +99,7 @@ const ResultsMenu = ({ poll }: IResultsMenu) => {
           ))}
         </div>
       )}
-      {poll.type == PollType.MULTIPLE && (
+      {poll.type === PollType.MULTIPLE && (
         <div className="md:flex items-start">
           <div className="flex-grow">
             {optionsWithPercent.map((option, index) => (

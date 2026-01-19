@@ -28,7 +28,7 @@ const DropDownItem = ({ option, selected, handleSelect }: IDropDownItem) => {
         )}
         {option.label}
       </div>
-      {selected && option.label == selected.label && (
+      {selected && option.label === selected.label && (
         <img className={'w-[20px] h-[20px] icon-bw'} src={check} alt="" />
       )}
     </li>

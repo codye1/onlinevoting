@@ -53,7 +53,7 @@ const Description = ({
             placeholder="Введіть опис"
             errors={descriptionError}
             value={field.value}
-            onChange={(e) => field.onChange(e.target.value.trim())}
+            onChange={(e) => field.onChange(e.target.value)}
           />
         )}
       />

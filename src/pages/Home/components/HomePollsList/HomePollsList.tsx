@@ -76,7 +76,7 @@ const HomePollsList = ({ polls }: IHomePollsList) => {
           Учасники
           {queryParams.sortByVotes && (
             <img
-              className={`w-[20px] h-[20px] icon-bw ${queryParams.sortByVotes == 'asc' && 'rotate-180'}`}
+              className={`w-[20px] h-[20px] icon-bw ${queryParams.sortByVotes === 'asc' && 'rotate-180'}`}
               src={drop}
               alt=""
             />

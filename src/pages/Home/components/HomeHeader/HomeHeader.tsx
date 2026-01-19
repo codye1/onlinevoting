@@ -3,7 +3,7 @@ import TextInput from '@components/TextInput.tsx';
 import plus from '@public/plus.svg';
 import DropDown from '@components/DropDown/DropDown.tsx';
 import { categoryOptions, filterOptions } from '../.././constants.ts';
-import AddPollModal from '../.././components/HomeHeader/components/AddPoolModal/AddPollModal.tsx';
+import AddPollModal from './components/AddPollModal/AddPollModal.tsx';
 import { ChangeEvent, Dispatch, useState } from 'react';
 import { QueryParams } from '../../Home.tsx';
 import { Category, inputTypes } from '@utils/types.ts';

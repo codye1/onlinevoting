@@ -25,9 +25,7 @@ function App() {
   useEffect(() => {
     if (isSuccess && data) {
       const decoded = jwtDecode<DecodedToken>(data.accessToken);
-      console.log('Decoded token:', decoded);
       if (!decoded.userId) return;
-      console.log(decoded);
       localStorage.setItem('token', data.accessToken);
       dispatch(authUser({ email: decoded.email, id: decoded.userId }));
     }

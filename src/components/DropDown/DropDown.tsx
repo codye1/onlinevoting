@@ -31,7 +31,7 @@ const DropDown = ({
 }: IDropDown) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Option | null>(
-    options.find((item) => item.value == value) ||
+    options.find((item) => item.value === value) ||
       options.find((item) => !item.disabled) ||
       null,
   );
