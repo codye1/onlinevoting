@@ -16,5 +16,5 @@ export type AddPollFormValues = {
   changeVote: boolean;
   voteInterval: string;
   closePollOnDate: boolean;
-  expireAtDate: Value;
+  expireAt: Value;
 };

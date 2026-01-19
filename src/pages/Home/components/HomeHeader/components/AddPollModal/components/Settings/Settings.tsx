@@ -58,18 +58,20 @@ const Settings = ({ control, errors }: ISettings) => {
               setChecked={(checked) => field.onChange(checked)}
               classNameChildren={'p-[5px]'}
             >
-              <Controller
-                name="expireAtDate"
-                control={control}
-                render={({ field: dateField }) => (
-                  <DateTimePicker
-                    className={'my-calendar'}
-                    onChange={(v) => dateField.onChange(v)}
-                    value={dateField.value}
-                  />
-                )}
-              />
-              {errors && <Errors errors={errors} />}
+              <div className="flex flex-col">
+                <Controller
+                  name="expireAt"
+                  control={control}
+                  render={({ field: dateField }) => (
+                    <DateTimePicker
+                      className={'my-calendar max-w-[150px]'}
+                      onChange={(v) => dateField.onChange(v)}
+                      value={dateField.value}
+                    />
+                  )}
+                />
+                {errors && <Errors errors={errors} />}
+              </div>
             </SettingSection>
           )}
         />

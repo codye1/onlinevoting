@@ -65,8 +65,8 @@ const AddPollModal = ({ handleClose }: IAddPollModal) => {
         <Settings
           control={form.control}
           errors={
-            form.errors.expireAtDate?.message
-              ? [form.errors.expireAtDate.message]
+            form.errors.expireAt?.message
+              ? [form.errors.expireAt.message]
               : undefined
           }
         />

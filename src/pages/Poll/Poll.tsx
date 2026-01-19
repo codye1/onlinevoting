@@ -4,7 +4,7 @@ import arrow from '@public/arrow.svg';
 import results from '@public/results.svg';
 import PollHeader from './components/PollHeader.tsx';
 import PollSkeleton from './components/PollSkeleton.tsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useGetPollQuery, useVoteMutation } from '../../reducer/api.ts';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Error from '@components/Error.tsx';
@@ -30,6 +30,12 @@ const Poll = () => {
   const [vote, { error: voteError, isLoading: voteLoading }] =
     useVoteMutation();
 
+  useEffect(() => {
+    if (userVote === null && data?.userVote) {
+      setUserVote(data.userVote.id);
+    }
+  }, [data?.userVote, userVote]);
+
   if (isLoading) {
     return <PollSkeleton />;
   }
@@ -40,10 +46,6 @@ const Poll = () => {
 
   if (!data) {
     return <Error error={'Опитування не знайдено'} />;
-  }
-
-  if (userVote === null && data.userVote !== null) {
-    setUserVote(data.userVote.id);
   }
 
   return (

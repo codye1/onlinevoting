@@ -75,7 +75,7 @@ const optionSchema = z.object({
     .trim(),
 });
 
-const pickDateFromPickerValue = (value: unknown): Date | undefined => {
+export const normalizeDateValue = (value: unknown): Date | undefined => {
   if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
 
   if (Array.isArray(value)) {
@@ -106,7 +106,15 @@ export const addPollValuesSchema = z
       })
       .trim(),
 
-    image: z.string(),
+    image: z.union([
+      z.literal(''),
+      z
+        .string()
+        .url({ message: 'URL зображення має бути дійсним.' })
+        .max(2048, {
+          message: 'URL зображення має містити не більше 2048 символів.',
+        }),
+    ]),
     type: z.nativeEnum(PollType),
     options: z.array(optionSchema),
 
@@ -117,21 +125,21 @@ export const addPollValuesSchema = z
     voteInterval: z.string(),
 
     closePollOnDate: z.boolean(),
-    expireAtDate: z.unknown(),
+    expireAt: z.unknown(),
   })
   .superRefine((data, ctx) => {
     if (data.closePollOnDate) {
-      const date = pickDateFromPickerValue(data.expireAtDate);
+      const date = normalizeDateValue(data.expireAt);
       if (!date) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['expireAtDate'],
+          path: ['expireAt'],
           message: 'Вкажіть коректну дату завершення.',
         });
       } else if (date < new Date(Date.now() + 2 * 60 * 1000)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['expireAtDate'],
+          path: ['expireAt'],
           message:
             'Дата має бути щонайменше на 2 хвилини пізніше від поточного часу.',
         });

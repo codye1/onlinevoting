@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addPollValuesSchema } from '@utils/definitions.ts';
+import { addPollValuesSchema, normalizeDateValue } from '@utils/definitions.ts';
 import { useAddPollMutation } from '@reducer/api.ts';
 import {
   Category,
@@ -12,7 +12,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import getRhfErrorMessage from './lib/getRhfErrorMessage';
 import isRtkQueryError from './lib/isRtkQueryError';
-import pickDateFromPickerValue from './lib/pickDateFromPickerValue';
 import { AddPollFormValues } from './lib/types';
 
 const useAddPollModal = (
@@ -44,7 +43,7 @@ const useAddPollModal = (
       changeVote: false,
       voteInterval: 'noInterval',
       closePollOnDate: false,
-      expireAtDate: new Date(),
+      expireAt: new Date(),
     },
     mode: 'onSubmit',
   });
@@ -54,7 +53,7 @@ const useAddPollModal = (
     setApiErrors(null);
 
     const expireAt = values.closePollOnDate
-      ? pickDateFromPickerValue(values.expireAtDate)
+      ? normalizeDateValue(values.expireAt)
       : undefined;
 
     const payload: AddPollRequest = {

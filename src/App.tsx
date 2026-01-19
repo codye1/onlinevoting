@@ -3,7 +3,7 @@ import Routing from './rout/routing.tsx';
 import { useRefreshMutation } from './reducer/api.ts';
 import { useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@hooks/hooks.tsx';
 import { authUser } from './reducer/auth.ts';
 import Header from './components/Header/Header.tsx';
 
@@ -16,7 +16,7 @@ export interface DecodedToken {
 
 function App() {
   const [refresh, { data, isSuccess, isError }] = useRefreshMutation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     refresh();

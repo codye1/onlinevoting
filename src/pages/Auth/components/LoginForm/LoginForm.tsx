@@ -14,7 +14,6 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
   const [state, action] = useActionState(login, undefined);
   const isLoading = useAppSelector((state) => state.auth.authLoading);
 
-  console.log('state', state);
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
