@@ -38,7 +38,6 @@ const login = async (_state: loginFormState, formData: FormData) => {
 
     // Обробка успішного результату
     localStorage.setItem('token', result.accessToken);
-    console.log('Успішний вхід:', result);
     const decoded = jwtDecode<DecodedToken>(result.accessToken);
     store.dispatch(setAuthLoading(false));
     store.dispatch(authUser({ id: decoded.userId, email }));

@@ -10,7 +10,7 @@ const initialState: IGeneral = {
 };
 
 const generalSlice = createSlice({
-  name: 'searchActive',
+  name: 'general',
   initialState,
   reducers: {
     setButtonLoading(state, action: PayloadAction<boolean>) {

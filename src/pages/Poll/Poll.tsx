@@ -1,12 +1,15 @@
 import description from '@public/description.svg';
-import OptionsList from './components/OptionsList.tsx';
 import MyButton from '@components/MyButton.tsx';
 import arrow from '@public/arrow.svg';
 import results from '@public/results.svg';
 import PollHeader from './components/PollHeader.tsx';
-import { useState } from 'react';
+import PollSkeleton from './components/PollSkeleton.tsx';
+import { useEffect, useState } from 'react';
 import { useGetPollQuery, useVoteMutation } from '../../reducer/api.ts';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import Error from '@components/Error.tsx';
+import OptionsList from './components/OptionsList/OptionsList.tsx';
+import { useAppSelector } from '@hooks/hooks.tsx';
 
 export interface Vote {
   optionId: string;
@@ -17,6 +20,7 @@ const Poll = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
   const { data, isLoading, error } = useGetPollQuery(
     { pollId: id! },
     { skip: !id },
@@ -26,33 +30,37 @@ const Poll = () => {
   const [vote, { error: voteError, isLoading: voteLoading }] =
     useVoteMutation();
 
+  useEffect(() => {
+    if (userVote === null && data?.userVote) {
+      setUserVote(data.userVote.id);
+    }
+  }, [data?.userVote, userVote]);
+
   if (isLoading) {
-    return <div>Загрузка опитування...</div>;
+    return <PollSkeleton />;
   }
 
-  if (error || !id || !data) {
-    return <div>Помилка загрузки опитування</div>;
+  if (error) {
+    return <Error error={error} />;
   }
 
-  if (userVote === null && data.userVote !== null) {
-    setUserVote(data.userVote.id);
+  if (!data) {
+    return <Error error={'Опитування не знайдено'} />;
   }
-  console.log(data);
+
   return (
     <menu
-      className={
-        'bg-[rgba(255,255,255,0.25)] rounded p-[20px] max-w-[765px] m-auto'
-      }
+      className={'bg-foreground shadow-m rounded p-[20px] max-w-[765px] m-auto'}
     >
       <PollHeader
         title={data.title}
         creator={data.creator?.email || 'Анонім'}
         startDate={data.createdAt}
       />
-      <span className={'mt-[20px] flex font-normal'}>
+      <section className={'mt-[20px] flex font-normal'}>
         {data.description && (
           <img
-            className={'w-[20px] h-[20px] mr-[10px]'}
+            className={'w-[20px] h-[20px] mr-[10px] icon-bw'}
             src={description}
             alt=""
           />
@@ -63,9 +71,9 @@ const Poll = () => {
             <img className={'mt-[20px] m-auto'} src={data.image} alt="" />
           )}
         </div>
-      </span>
-      <span>
-        <h1>Зроби свій вибір</h1>
+      </section>
+      <section>
+        {!data.description && <h2>Зроби свій вибір</h2>}
         <OptionsList
           options={data.options}
           selectedOptionId={userVote ? userVote : ''}
@@ -78,11 +86,11 @@ const Poll = () => {
         <div className={'flex'}>
           <MyButton
             label={'Проголосувати'}
+            isDisabled={!isAuth}
             type={'button'}
             isLoading={voteLoading}
             onClick={async () => {
               if (userVote !== null) {
-                console.log(userVote);
                 await vote({
                   optionId: userVote,
                   pollId: id!,
@@ -103,7 +111,7 @@ const Poll = () => {
             className={'pr-[20px] pl-[20px]'}
           />
         </div>
-      </span>
+      </section>
     </menu>
   );
 };

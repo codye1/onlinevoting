@@ -22,7 +22,7 @@ const initialState: IAuth = {
 };
 
 const authSlice = createSlice({
-  name: 'searchActive',
+  name: 'auth',
   initialState,
   reducers: {
     authUser(state, action: PayloadAction<User>) {

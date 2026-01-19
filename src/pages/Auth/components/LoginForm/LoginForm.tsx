@@ -4,6 +4,7 @@ import { FormEvent, startTransition, useActionState } from 'react';
 import { useAppSelector } from '@hooks/hooks.tsx';
 import TextInput from '@components/TextInput.tsx';
 import { inputTypes } from '@utils/types.ts';
+import Errors from '@components/Errors';
 
 interface LoginForm {
   onHaveAccount: () => void;
@@ -13,7 +14,6 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
   const [state, action] = useActionState(login, undefined);
   const isLoading = useAppSelector((state) => state.auth.authLoading);
 
-  console.log('state', state);
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -26,7 +26,7 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
     <form
       onSubmit={handleSubmit}
       className={
-        'bg-[#1E1E1E] text-xl p-10 rounded-sm flex text-center justify-center flex-col max-w-100 m-auto'
+        'shadow-m bg-foreground text-xl p-10 rounded-sm flex text-center justify-center flex-col max-w-100 m-auto '
       }
     >
       <h1 className={'text-2xl'}>Login</h1>
@@ -42,14 +42,15 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
         type={inputTypes.password}
         errors={state?.errors.password}
       />
-      <p className={'text-start text-red-500 text-sm font-light'}>
-        {state?.errors.auth}
-      </p>
+      {state?.errors.auth && <Errors errors={state.errors.auth} />}
       <MyButton type={'submit'} label={'Вхід'} isLoading={isLoading} />
 
       <p className={'mt-[30px] text-base font-light'}>
         Ще не маєте облікового запису?{' '}
-        <strong className={'cursor-pointer'} onClick={onHaveAccount}>
+        <strong
+          className={'cursor-pointer text-shadow-m'}
+          onClick={onHaveAccount}
+        >
           Зареєструйтесь
         </strong>
       </p>

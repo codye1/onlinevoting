@@ -4,6 +4,7 @@ import { FormEvent, startTransition, useActionState } from 'react';
 import signup from '@actions/signup.ts';
 import { useAppSelector } from '@hooks/hooks.tsx';
 import { inputTypes } from '@utils/types.ts';
+import Errors from '@components/Errors';
 
 interface SignupForm {
   onHaveAccount: () => void;
@@ -24,7 +25,7 @@ const Signup = ({ onHaveAccount }: SignupForm) => {
     <form
       onSubmit={handleSubmit}
       className={
-        'bg-[#1E1E1E] text-xl p-10 rounded-sm flex text-center justify-center flex-col max-w-100 m-auto'
+        'bg-foreground text-xl p-10 rounded-sm flex text-center justify-center flex-col max-w-100 m-auto'
       }
     >
       <h1 className={'text-2xl'}>Signup</h1>
@@ -46,18 +47,19 @@ const Signup = ({ onHaveAccount }: SignupForm) => {
         name={'confirmPassword'}
         errors={state?.errors.confirmPassword}
       />
-      <p className={'text-start text-sm text-red-500 font-light'}>
-        {state?.errors.auth}
-      </p>
+      {state?.errors.auth && <Errors errors={state.errors.auth} />}
       <MyButton
         label={'Зареєструватися '}
         type={'submit'}
         isLoading={isLoading}
       />
 
-      <p className={'mt-[30px] text-base font-light'}>
+      <p className={'mt-[30px] font-light text-xl'}>
         Вже маєте акаунт?{' '}
-        <strong className={'cursor-pointer'} onClick={onHaveAccount}>
+        <strong
+          className={'cursor-pointer text-shadow-m'}
+          onClick={onHaveAccount}
+        >
           Вхід
         </strong>
       </p>

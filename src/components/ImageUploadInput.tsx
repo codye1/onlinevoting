@@ -82,8 +82,8 @@ const ImageUploadInput = ({
     <div>
       <label
         htmlFor="add-image-options"
-        className={`h-44 w-full p-1 border border-gray-700 rounded-md relative text-gray-500 flex items-center justify-center cursor-pointer transition-colors ${
-          isDragging ? 'bg-gray-700' : 'bg-[#4B4B4B]'
+        className={`h-44 w-full p-1 shadow-s rounded-md relative text-muted flex items-center justify-center cursor-pointer  transition-colors ${
+          isDragging ? 'bg-light' : 'bg-hover'
         } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onDragOver={isDragging || isLoading ? undefined : handleDragOver}
         onDragLeave={isDragging || isLoading ? undefined : handleDragLeave}
@@ -93,7 +93,7 @@ const ImageUploadInput = ({
           id="add-image-options"
           name={name}
           type="file"
-          className="absolute opacity-0 top-0 left-0 h-full w-full cursor-pointer"
+          className="absolute opacity-0 top-0 left-0 h-full w-full cursor-pointer bg-light"
           accept="image/*"
           multiple
           onChange={isLoading ? undefined : handleInputChange}
@@ -105,7 +105,7 @@ const ImageUploadInput = ({
           ) : (
             <div className="flex justify-center">
               <img
-                className={'h-[15px] w-[15px] opacity-25'}
+                className={'h-[15px] w-[15px] opacity-25 icon-bw'}
                 src={plus}
                 alt=""
               />

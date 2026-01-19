@@ -7,10 +7,10 @@ import type {
 } from '@reduxjs/toolkit/query';
 
 import { Vote } from '../pages/Poll/Poll.tsx';
-import { PollItem } from '@components/PollsList.tsx';
 import { Poll, PollOption } from '../utils/types.ts';
-import { AddPoll } from '../actions/addPoll.ts';
+import { AddPollRequest } from '../utils/types.ts';
 import { QueryParams } from 'src/pages/Home/Home.tsx';
+import { IPollItem } from '@components/PollsList/PollItem.tsx';
 
 interface PollResponse extends Poll {
   id: string;
@@ -57,7 +57,6 @@ interface ImgBBResponse {
   status: number;
 }
 
-// ImgBB API key (replace with your actual key)
 const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -139,7 +138,7 @@ export const apiSlice = createApi({
         }),
       },
     ),
-    addPoll: builder.mutation<AuthResponce, AddPoll>({
+    addPoll: builder.mutation<AuthResponce, AddPollRequest>({
       query: (poll) => ({
         url: 'polls',
         method: 'POST',
@@ -161,13 +160,25 @@ export const apiSlice = createApi({
       transformResponse: (response: { poll: PollResultsResponse }) =>
         response.poll,
     }),
-    getPolls: builder.query<PollsResponse<PollItem>, QueryParams>({
+    getPolls: builder.query<PollsResponse<IPollItem>, QueryParams>({
       query: (params) => ({
         url: 'polls',
         method: 'GET',
         params,
+        responseHandler: async (response) => {
+          const text = await response.text();
+          return text ? (JSON.parse(text) as unknown) : null;
+        },
       }),
-      serializeQueryArgs: ({ endpointName }) => endpointName,
+      transformResponse: (response: PollsResponse<IPollItem> | null) => ({
+        polls: response?.polls ?? [],
+        nextCursor: response?.nextCursor ?? null,
+        hasMore: response?.hasMore ?? false,
+      }),
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        // Do not include `cursor` in the cache key: keep one cache entry per filter/search combo.
+        return `${endpointName}|${queryArgs.filter}|${queryArgs.pageSize}|${queryArgs.search}|${queryArgs.category}|${queryArgs.sortByVotes ?? ''}`;
+      },
       forceRefetch({ currentArg, previousArg }) {
         return currentArg?.cursor !== previousArg?.cursor;
       },
@@ -241,6 +252,7 @@ export const apiSlice = createApi({
 export const {
   useGetUsersQuery,
   useLoginMutation,
+  useAddPollMutation,
   useGetPollResultsQuery,
   useGetPollQuery,
   useGetPollsQuery,
