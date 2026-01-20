@@ -5,6 +5,7 @@ import signup from '@actions/signup.ts';
 import { useAppSelector } from '@hooks/hooks.tsx';
 import { inputTypes } from '@utils/types.ts';
 import Errors from '@components/Errors';
+import GoogleButton from '../GoogleButton';
 
 interface SignupForm {
   onHaveAccount: () => void;
@@ -54,7 +55,7 @@ const Signup = ({ onHaveAccount }: SignupForm) => {
         isLoading={isLoading}
       />
 
-      <p className={'mt-[30px] font-light text-xl'}>
+      <p className={'mt-[30px] mb-[30px] font-light text-xl'}>
         Вже маєте акаунт?{' '}
         <strong
           className={'cursor-pointer text-shadow-m'}
@@ -63,6 +64,8 @@ const Signup = ({ onHaveAccount }: SignupForm) => {
           Вхід
         </strong>
       </p>
+
+      <GoogleButton />
     </form>
   );
 };

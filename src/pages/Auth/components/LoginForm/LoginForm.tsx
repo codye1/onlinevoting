@@ -5,6 +5,7 @@ import { useAppSelector } from '@hooks/hooks.tsx';
 import TextInput from '@components/TextInput.tsx';
 import { inputTypes } from '@utils/types.ts';
 import Errors from '@components/Errors';
+import GoogleButton from '../GoogleButton';
 
 interface LoginForm {
   onHaveAccount: () => void;
@@ -45,7 +46,7 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
       {state?.errors.auth && <Errors errors={state.errors.auth} />}
       <MyButton type={'submit'} label={'Вхід'} isLoading={isLoading} />
 
-      <p className={'mt-[30px] text-base font-light'}>
+      <p className={'mt-[30px] mb-[30px] text-base font-light'}>
         Ще не маєте облікового запису?{' '}
         <strong
           className={'cursor-pointer text-shadow-m'}
@@ -54,6 +55,7 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
           Зареєструйтесь
         </strong>
       </p>
+      <GoogleButton />
     </form>
   );
 };

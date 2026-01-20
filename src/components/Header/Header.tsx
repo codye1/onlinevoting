@@ -10,6 +10,16 @@ const Header = () => {
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
 
+  const onLogout = async () => {
+    document.body.classList.add('loading');
+    try {
+      await logout().unwrap();
+    } finally {
+      document.body.classList.remove('loading');
+      window.location.reload();
+    }
+  };
+
   return (
     <header className="flex justify-between h-[50px] items-center text-2xl">
       <a
@@ -24,32 +34,28 @@ const Header = () => {
       <section className="flex items-center height-full">
         <ThemeSwitcher />
         {isAuth ? (
-          <img
-            title="Logout"
-            className="w-[25px] h-[25px] cursor-pointer icon-bw"
-            src={logoutIcon}
-            alt={'Logout'}
-            onClick={async () => {
-              document.body.classList.add('loading');
-              try {
-                await logout().unwrap();
-              } finally {
-                document.body.classList.remove('loading');
-                window.location.reload();
-              }
-            }}
-          />
+          <div className="bg-foreground rounded-xl p-1 flex relative shadow-m  cursor-pointer ml-1">
+            <img
+              title="Logout"
+              className="w-[25px] h-[25px] cursor-pointer icon-bw"
+              src={logoutIcon}
+              alt={'Logout'}
+              onClick={onLogout}
+            />
+          </div>
         ) : (
-          <img
-            title="Login"
-            className="w-[25px] h-[25px] mr-[5px] cursor-pointer icon-bw"
-            src={loginIcon}
-            alt={'Login'}
-            onClick={() => {
-              navigate('/auth');
-              return;
-            }}
-          />
+          <div className="bg-foreground rounded-xl p-1 flex relative shadow-m  cursor-pointer ml-1">
+            <img
+              title="Login"
+              className="w-[25px] h-[25px] mr-[5px] icon-bw cursor-pointer"
+              src={loginIcon}
+              alt={'Login'}
+              onClick={() => {
+                navigate('/auth');
+                return;
+              }}
+            />
+          </div>
         )}
       </section>
     </header>
