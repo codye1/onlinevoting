@@ -122,6 +122,13 @@ export const apiSlice = createApi({
     getUsers: builder.query<User[], void>({
       query: () => '/users',
     }),
+    googleLogin: builder.mutation<AuthResponce, { credential: string }>({
+      query: (body) => ({
+        url: 'auth/google',
+        method: 'POST',
+        body,
+      }),
+    }),
     login: builder.mutation<AuthResponce, { email: string; password: string }>({
       query: (user) => ({
         url: 'login',
@@ -260,4 +267,5 @@ export const {
   useRefreshMutation,
   useUploadImagesToImgBBMutation,
   useLogoutMutation,
+  useGoogleLoginMutation,
 } = apiSlice;
