@@ -124,12 +124,12 @@ export const addPollValuesSchema = z
     changeVote: z.boolean(),
     voteInterval: z.string(),
 
-    closePollOnDate: z.boolean(),
     expireAt: z.unknown(),
   })
   .superRefine((data, ctx) => {
-    if (data.closePollOnDate) {
+    if (data.expireAt) {
       const date = normalizeDateValue(data.expireAt);
+
       if (!date) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

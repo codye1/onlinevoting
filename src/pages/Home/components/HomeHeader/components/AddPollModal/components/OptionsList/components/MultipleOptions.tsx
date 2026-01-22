@@ -2,7 +2,7 @@ import TextInput from '@components/TextInput.tsx';
 import MyButton from '@components/MyButton.tsx';
 import close from '@public/close.svg';
 import plus from '@public/plus.svg';
-import { inputTypes } from '@utils/types.ts';
+import { AddPollRequest, inputTypes } from '@utils/types.ts';
 import type {
   Control,
   FieldArrayWithId,
@@ -10,14 +10,13 @@ import type {
   UseFieldArrayRemove,
 } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-import type { AddPollFormValues } from '../../../lib/types';
 
-type OptionField = FieldArrayWithId<AddPollFormValues, 'options', 'id'>;
+type OptionField = FieldArrayWithId<AddPollRequest, 'options', 'id'>;
 
 interface IMultipleOptions {
-  control: Control<AddPollFormValues>;
+  control: Control<AddPollRequest>;
   fields: OptionField[];
-  append: UseFieldArrayAppend<AddPollFormValues, 'options'>;
+  append: UseFieldArrayAppend<AddPollRequest, 'options'>;
   remove: UseFieldArrayRemove;
 }
 

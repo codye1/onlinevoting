@@ -11,14 +11,15 @@ import useAddPollModal from './useAddPollModal.tsx';
 
 interface IAddPollModal {
   handleClose: (reason: 'created' | 'closed') => void;
+  isOpen: boolean;
 }
 
-const AddPollModal = ({ handleClose }: IAddPollModal) => {
+const AddPollModal = ({ handleClose, isOpen }: IAddPollModal) => {
   const { form, isLoading, apiErrors, optionsSchemaMessage } =
     useAddPollModal(handleClose);
 
   return (
-    <Modal close={() => handleClose('closed')}>
+    <Modal isOpen={isOpen} close={() => handleClose('closed')}>
       <form
         onSubmit={form.handleSubmit(form.onSubmit)}
         className={'max-w-[815px] w-full'}
@@ -52,7 +53,7 @@ const AddPollModal = ({ handleClose }: IAddPollModal) => {
               ? [form.errors.description.message]
               : undefined
           }
-          image={form.watch('image')}
+          image={form.watch('image') || ''}
           setImage={(url) => form.setValue('image', url)}
         />
 
@@ -64,6 +65,7 @@ const AddPollModal = ({ handleClose }: IAddPollModal) => {
 
         <Settings
           control={form.control}
+          setValue={form.setValue}
           errors={
             form.errors.expireAt?.message
               ? [form.errors.expireAt.message]
@@ -71,12 +73,22 @@ const AddPollModal = ({ handleClose }: IAddPollModal) => {
           }
         />
 
-        <MyButton
-          className={'ml-auto'}
-          type={'submit'}
-          label={'Створити голосування'}
-          isLoading={isLoading}
-        />
+        <div className="flex">
+          <MyButton
+            type={'button'}
+            label={'Очистити форму'}
+            onClick={() => {
+              localStorage.removeItem('addPollFormData');
+              form.reset();
+            }}
+          />
+          <MyButton
+            className={'ml-auto'}
+            type={'submit'}
+            label={'Створити голосування'}
+            isLoading={isLoading}
+          />
+        </div>
         {apiErrors && <Errors errors={apiErrors} />}
       </form>
     </Modal>

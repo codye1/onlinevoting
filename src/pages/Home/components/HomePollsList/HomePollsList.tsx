@@ -10,10 +10,9 @@ import participants from '@public/participants.svg';
 import deadline from '@public/deadline.svg';
 import pollIcon from '@public/poll.svg';
 import status from '@public/status.svg';
+import { Dispatch } from 'react';
 
 interface PollsData {
-  queryParams: QueryParams;
-  setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>;
   data: IPollItem[];
   sentinelRef: React.RefObject<HTMLDivElement | null>;
   isLoading: boolean;
@@ -23,18 +22,16 @@ interface PollsData {
 
 interface IHomePollsList {
   polls: PollsData;
+  queryParams: QueryParams;
+  setQueryParams: Dispatch<React.SetStateAction<QueryParams>>;
 }
 
-const HomePollsList = ({ polls }: IHomePollsList) => {
-  const {
-    queryParams,
-    setQueryParams,
-    data,
-    sentinelRef,
-    isLoading,
-    isFetching,
-    error,
-  } = polls;
+const HomePollsList = ({
+  polls,
+  queryParams,
+  setQueryParams,
+}: IHomePollsList) => {
+  const { data, sentinelRef, isLoading, isFetching, error } = polls;
 
   const handleSortByVotesChange = () => {
     setQueryParams((prev) => ({
@@ -65,7 +62,7 @@ const HomePollsList = ({ polls }: IHomePollsList) => {
           Опитування
         </span>
         <span
-          className="w-[100px] text-center flex items-center"
+          className="w-[100px] text-center flex items-center justify-center mr-[20px] cursor-pointer"
           onClick={() => handleSortByVotesChange()}
         >
           <img
@@ -82,7 +79,7 @@ const HomePollsList = ({ polls }: IHomePollsList) => {
             />
           )}
         </span>
-        <span className="w-[100px] text-center flex items-center">
+        <span className="w-[100px] text-center flex items-center justify-center">
           <img
             className="w-[20px] h-[20px] mr-[5px] icon-bw"
             src={deadline}
@@ -90,7 +87,7 @@ const HomePollsList = ({ polls }: IHomePollsList) => {
           />
           Дедлайн
         </span>
-        <span className="w-[100px] text-center flex items-center">
+        <span className="w-[100px] text-center flex items-center justify-center">
           <img
             className="w-[20px] h-[20px] mr-[5px] icon-bw"
             src={status}

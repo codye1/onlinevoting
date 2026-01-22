@@ -69,13 +69,18 @@ const PollItem = ({
           {expireAt ? formatDate(expireAt) : '-'}
         </span>
         <span className="w-[100px] text-center flex items-center justify-center">
-          <span
-            className={`w-[8px] h-[8px] rounded-full mr-[5px] ${
-              isLive
-                ? 'bg-green-500 shadow-[0_0_10px_green]'
-                : 'bg-red-500 shadow-[0_0_10px_red]'
-            }`}
-          ></span>
+          <span className="relative flex w-[8px] h-[8px] mr-[5px]">
+            <span
+              className={`absolute inline-flex h-full w-full animate-ping rounded-full ${
+                isLive ? 'bg-green-400' : 'bg-red-400'
+              } opacity-75`}
+            ></span>
+            <span
+              className={`relative inline-flex w-[8px] h-[8px] rounded-full ${
+                isLive ? 'bg-green-500' : 'bg-red-500'
+              }`}
+            ></span>
+          </span>
           {isLive ? 'Live' : 'Closed'}
         </span>
       </div>

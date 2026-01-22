@@ -12,6 +12,7 @@ interface IOptionsList {
   selectedOptionId: string;
   handleOptionChange: (optionId: string) => void;
   error?: FetchBaseQueryError | SerializedError;
+  isDisabled?: boolean;
 }
 
 const OptionsList = ({
@@ -20,6 +21,7 @@ const OptionsList = ({
   handleOptionChange,
   error,
   pollType,
+  isDisabled,
 }: IOptionsList) => {
   return (
     <div>
@@ -32,6 +34,7 @@ const OptionsList = ({
             <ImageOption
               option={option}
               key={option.id}
+              isDisabled={isDisabled}
               selectedOptionId={selectedOptionId}
               handleOptionChange={handleOptionChange}
             />
@@ -45,6 +48,7 @@ const OptionsList = ({
                 option={option}
                 index={index}
                 key={option.id}
+                isDisabled={isDisabled}
                 selectedOptionId={selectedOptionId}
                 handleOptionChange={handleOptionChange}
               />

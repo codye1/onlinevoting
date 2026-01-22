@@ -4,7 +4,7 @@ import plus from '@public/plus.svg';
 import DropDown from '@components/DropDown/DropDown.tsx';
 import { categoryOptions, filterOptions } from '../.././constants.ts';
 import AddPollModal from './components/AddPollModal/AddPollModal.tsx';
-import { ChangeEvent, Dispatch, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 import { QueryParams } from '../../Home.tsx';
 import { Category, inputTypes } from '@utils/types.ts';
 import { useAppSelector } from '@hooks/hooks.tsx';
@@ -13,20 +13,21 @@ import MyButton from '@components/MyButton.tsx';
 import Error from '@components/Error.tsx';
 import ScrollXControls from '@components/ScrollXControls.tsx';
 import { useNavigate } from 'react-router-dom';
+import useDebounce from '@hooks/useDebounce.ts';
 
 interface IHomeHeader {
   queryParams: QueryParams;
   setQueryParams: Dispatch<React.SetStateAction<QueryParams>>;
-  onPollCreated: () => void;
+  handlePollCreated: () => void;
 }
 
 const HomeHeader = ({
   queryParams,
   setQueryParams,
-  onPollCreated,
+  handlePollCreated,
 }: IHomeHeader) => {
-  const [openModal, setOpenModal] = useState(false);
-  const [alertModal, setAlertModal] = useState(false);
+  const [addPollModalOpen, setAddPollModalOpen] = useState(false);
+  const [alertModalOpen, setAlertModalOpen] = useState(false);
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const navigate = useNavigate();
   const filterOptionsWithDisabled = filterOptions.map((opt) => ({
@@ -34,19 +35,21 @@ const HomeHeader = ({
     disabled:
       !isAuth && (opt.value === 'CREATED' || opt.value === 'PARTICIPATED'),
   }));
+  const [search, setSearch] = useState(queryParams.search);
+  const debouncedSearch = useDebounce(search, 500);
+
+  useEffect(() => {
+    setQueryParams((prev) => ({
+      ...prev,
+      search: debouncedSearch,
+      cursor: null,
+    }));
+  }, [debouncedSearch, setQueryParams]);
 
   const handleFilterChange = (value: string) => {
     setQueryParams((prev) => ({
       ...prev,
       filter: value,
-      cursor: null,
-    }));
-  };
-
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setQueryParams((prev) => ({
-      ...prev,
-      search: event.target.value,
       cursor: null,
     }));
   };
@@ -60,18 +63,18 @@ const HomeHeader = ({
   };
 
   const handleClose = async (reason: 'created' | 'closed') => {
-    setOpenModal(false);
+    setAddPollModalOpen(false);
     if (reason === 'created') {
-      onPollCreated();
+      handlePollCreated();
     }
   };
 
   const handleOpen = () => {
     if (!isAuth) {
-      setAlertModal(true);
+      setAlertModalOpen(true);
       return;
     }
-    setOpenModal(true);
+    setAddPollModalOpen(true);
   };
 
   return (
@@ -108,8 +111,8 @@ const HomeHeader = ({
           classNameInput={'p-[10px] min-w-[205px]'}
           type={inputTypes.text}
           trackValue={{
-            onChange: handleSearchChange,
-            value: queryParams.search,
+            onChange: (e) => setSearch(e.target.value),
+            value: search,
           }}
         />
       </section>
@@ -126,23 +129,21 @@ const HomeHeader = ({
         />
         Створити опитування
       </p>
-      {alertModal && (
-        <Modal close={() => setAlertModal(false)}>
-          <Error
-            error={
-              'Щоб створювати опитування, будь ласка, увійдіть у свій акаунт.'
-            }
-            className={'mt-[20px]'}
-          />
-          <MyButton
-            label="Ввійти"
-            type="button"
-            onClick={() => navigate('/auth')}
-            className={'mt-[20px]'}
-          />
-        </Modal>
-      )}
-      {openModal && <AddPollModal handleClose={handleClose} />}
+      <Modal isOpen={alertModalOpen} close={() => setAlertModalOpen(false)}>
+        <Error
+          error={
+            'Щоб створювати опитування, будь ласка, увійдіть у свій акаунт.'
+          }
+          className={'mt-[20px]'}
+        />
+        <MyButton
+          label="Ввійти"
+          type="button"
+          onClick={() => navigate('/auth')}
+          className={'mt-[20px] mx-auto'}
+        />
+      </Modal>
+      <AddPollModal isOpen={addPollModalOpen} handleClose={handleClose} />
     </div>
   );
 };

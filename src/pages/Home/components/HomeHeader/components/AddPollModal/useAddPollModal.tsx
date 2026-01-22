@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addPollValuesSchema, normalizeDateValue } from '@utils/definitions.ts';
-import { useAddPollMutation } from '@reducer/api.ts';
+import { addPollValuesSchema } from '@utils/definitions.ts';
+import { useAddPollMutation } from '@reducer/api/slices/pollSlice.ts';
 import {
   Category,
   PollResultsVisibility,
@@ -8,75 +8,78 @@ import {
   type AddPollRequest,
 } from '@utils/types.ts';
 import getErrorMessage from '@utils/getErrorMessage.ts';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import getRhfErrorMessage from './lib/getRhfErrorMessage';
 import isRtkQueryError from './lib/isRtkQueryError';
-import { AddPollFormValues } from './lib/types';
+
+const STORAGE_KEY = 'addPollFormData';
+
+const defaultValues: AddPollRequest = {
+  title: '',
+  description: '',
+  image: '',
+  type: PollType.MULTIPLE,
+  options: [
+    { file: null, title: '' },
+    { file: null, title: '' },
+  ],
+  resultsVisibility: PollResultsVisibility.ALWAYS,
+  category: Category.NONE,
+  voteInterval: 'noInterval',
+  changeVote: false,
+  expireAt: null,
+};
+
+const getDefaultValues = (): AddPollRequest => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return defaultValues;
+    const parsed = JSON.parse(stored);
+    return parsed;
+  } catch {
+    return defaultValues;
+  }
+};
 
 const useAddPollModal = (
   handleClose: (reason: 'created' | 'closed') => void,
 ) => {
   const [addPoll, { isLoading }] = useAddPollMutation();
   const [apiErrors, setApiErrors] = useState<string[] | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const cancelPendingSave = () => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
+    }
+  };
   const {
     control,
     handleSubmit,
     clearErrors,
     setValue,
     watch,
+    reset,
     formState: { errors },
-  } = useForm<AddPollFormValues>({
+  } = useForm<AddPollRequest>({
     resolver: zodResolver(addPollValuesSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      image: '',
-      type: PollType.MULTIPLE,
-      options: [
-        { file: null, title: '' },
-        { file: null, title: '' },
-      ],
-      resultsVisibility: PollResultsVisibility.ALWAYS,
-      category: Category.NONE,
-      changeVote: false,
-      voteInterval: 'noInterval',
-      closePollOnDate: false,
-      expireAt: new Date(),
-    },
+    defaultValues: getDefaultValues(),
     mode: 'onSubmit',
   });
 
-  const onSubmit = async (values: AddPollFormValues) => {
+  const onSubmit = async (values: AddPollRequest) => {
     clearErrors();
     setApiErrors(null);
-
-    const expireAt = values.closePollOnDate
-      ? normalizeDateValue(values.expireAt)
-      : undefined;
-
-    const payload: AddPollRequest = {
-      title: values.title,
-      description: values.description.trim()
-        ? values.description.trim()
-        : undefined,
-      image: values.image ?? '',
-      type: values.type,
-      options: values.options.map((opt) => ({
-        title: opt.title,
-        file: values.type === PollType.MULTIPLE ? null : opt.file,
-      })),
-      resultsVisibility: values.resultsVisibility,
-      category: values.category,
-      changeVote: values.changeVote,
-      voteInterval: values.voteInterval,
-      expireAt,
-    };
-
+    cancelPendingSave();
     try {
-      await addPoll(payload).unwrap();
+      await addPoll(values).unwrap();
       handleClose('created');
+
+      cancelPendingSave();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultValues));
+      reset(defaultValues);
     } catch (e) {
       const msg = isRtkQueryError(e) ? getErrorMessage(e) : null;
       setApiErrors([msg ?? 'Unknown error']);
@@ -84,6 +87,21 @@ const useAddPollModal = (
   };
 
   const optionsSchemaMessage = getRhfErrorMessage(errors.options);
+
+  useEffect(() => {
+    const subscription = watch((values) => {
+      cancelPendingSave();
+
+      saveTimeoutRef.current = setTimeout(() => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+      }, 500);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      cancelPendingSave();
+    };
+  }, [watch]);
 
   return {
     form: {
@@ -94,6 +112,7 @@ const useAddPollModal = (
       clearErrors,
       handleSubmit,
       onSubmit,
+      reset,
     },
     isLoading,
     apiErrors,

@@ -4,7 +4,7 @@ import MyButton from '@components/MyButton.tsx';
 import arrowLeft from '@public/arrowLeft.svg';
 import refresh from '@public/refresh.svg';
 import ResultsMenu from './components/ResultsMenu.tsx';
-import { useGetPollResultsQuery } from '../../reducer/api.ts';
+import { useGetPollResultsQuery } from '@reducer/api/slices/pollSlice.ts';
 import Error from '@components/Error.tsx';
 import PollResultsSkeleton from './components/PollResultsSkeleton.tsx';
 
@@ -39,6 +39,7 @@ const PollResults = () => {
             creator={poll.creatorEmail}
             title={poll.title}
             startDate={poll.createdAt}
+            expireAt={null}
           />
           <ResultsMenu poll={poll} />
           <div className="flex mt-4">

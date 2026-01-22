@@ -1,7 +1,8 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import dropDown from '@public/dropDown.svg';
 import DropDownItem from './DropDownItem';
+import useMenuPosition from './useMenuPosition';
 
 export type Option = {
   label: string;
@@ -35,65 +36,16 @@ const DropDown = ({
       options.find((item) => !item.disabled) ||
       null,
   );
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLUListElement>(null);
-
-  const [menuPos, setMenuPos] = useState<{
-    top: number;
-    left: number;
-    width: number;
-  }>({
-    top: 0,
-    left: 0,
-    width: 0,
+  const { menuPos, menuRef, buttonRef, dropdownRef } = useMenuPosition({
+    isOpen,
+    setIsOpen,
   });
-
-  const updateMenuPosition = () => {
-    const anchor = buttonRef.current;
-    if (!anchor) return;
-    const rect = anchor.getBoundingClientRect();
-    setMenuPos({
-      top: rect.bottom + 5,
-      left: rect.left,
-      width: rect.width,
-    });
-  };
-
   const handleSelect = (option: Option) => {
     if (option.disabled) return;
     setSelected(option);
     onSelect(String(option.value));
     setIsOpen(false);
   };
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      const insideTrigger = dropdownRef.current?.contains(target);
-      const insideMenu = menuRef.current?.contains(target);
-      if (!insideTrigger && !insideMenu) setIsOpen(false);
-    };
-
-    const handleReposition = () => updateMenuPosition();
-
-    document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('resize', handleReposition);
-    window.addEventListener('scroll', handleReposition, true);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('resize', handleReposition);
-      window.removeEventListener('scroll', handleReposition, true);
-    };
-  }, [isOpen]);
-
-  useLayoutEffect(() => {
-    if (!isOpen) return;
-    updateMenuPosition();
-  }, [isOpen]);
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
@@ -137,7 +89,7 @@ const DropDown = ({
               <DropDownItem
                 key={option.value}
                 option={option}
-                selected={selected}
+                selected={selected?.label === option.label}
                 handleSelect={handleSelect}
               />
             ))}

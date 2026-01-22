@@ -3,7 +3,7 @@ import { Option } from './DropDown';
 
 interface IDropDownItem {
   option: Option;
-  selected: { label: string } | null;
+  selected: boolean;
   handleSelect: (option: {
     label: string;
     value: string | number;
@@ -15,7 +15,7 @@ const DropDownItem = ({ option, selected, handleSelect }: IDropDownItem) => {
   return (
     <li
       key={option.value}
-      className={`p-2 hover:bg-hover text-default flex justify-between items-center ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+      className={`${selected && 'bg-selected'} p-2 hover:bg-hover text-default flex justify-between items-center ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
       onClick={() => handleSelect(option)}
     >
       <div className="flex items-center">
@@ -28,7 +28,7 @@ const DropDownItem = ({ option, selected, handleSelect }: IDropDownItem) => {
         )}
         {option.label}
       </div>
-      {selected && option.label === selected.label && (
+      {selected && (
         <img className={'w-[20px] h-[20px] icon-bw'} src={check} alt="" />
       )}
     </li>

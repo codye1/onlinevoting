@@ -2,7 +2,6 @@ import TextInput from '@components/TextInput.tsx';
 import MyButton from '@components/MyButton.tsx';
 import { FormEvent, startTransition, useActionState } from 'react';
 import signup from '@actions/signup.ts';
-import { useAppSelector } from '@hooks/hooks.tsx';
 import { inputTypes } from '@utils/types.ts';
 import Errors from '@components/Errors';
 import GoogleButton from '../GoogleButton';
@@ -12,8 +11,7 @@ interface SignupForm {
 }
 
 const Signup = ({ onHaveAccount }: SignupForm) => {
-  const [state, action] = useActionState(signup, undefined);
-  const isLoading = useAppSelector((state) => state.auth.authLoading);
+  const [state, action, isPending] = useActionState(signup, undefined);
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -52,7 +50,7 @@ const Signup = ({ onHaveAccount }: SignupForm) => {
       <MyButton
         label={'Зареєструватися '}
         type={'submit'}
-        isLoading={isLoading}
+        isLoading={isPending}
       />
 
       <p className={'mt-[30px] mb-[30px] font-light text-xl'}>

@@ -15,17 +15,21 @@ export interface QueryParams {
 }
 
 const Home = () => {
-  const polls = useHome();
+  const { polls, queryParams, setQueryParams, handlePollCreated } = useHome();
 
   return (
     <menu>
       <HomeHeader
-        onPollCreated={polls.handlePollCreated}
-        queryParams={polls.queryParams}
-        setQueryParams={polls.setQueryParams}
+        handlePollCreated={handlePollCreated}
+        queryParams={queryParams}
+        setQueryParams={setQueryParams}
       />
 
-      <HomePollsList polls={polls} />
+      <HomePollsList
+        polls={polls}
+        queryParams={queryParams}
+        setQueryParams={setQueryParams}
+      />
     </menu>
   );
 };

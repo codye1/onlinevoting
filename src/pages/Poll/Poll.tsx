@@ -5,7 +5,10 @@ import results from '@public/results.svg';
 import PollHeader from './components/PollHeader.tsx';
 import PollSkeleton from './components/PollSkeleton.tsx';
 import { useEffect, useState } from 'react';
-import { useGetPollQuery, useVoteMutation } from '../../reducer/api.ts';
+import {
+  useGetPollQuery,
+  useVoteMutation,
+} from '@reducer/api/slices/pollSlice.ts';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Error from '@components/Error.tsx';
 import OptionsList from './components/OptionsList/OptionsList.tsx';
@@ -25,7 +28,6 @@ const Poll = () => {
     { pollId: id! },
     { skip: !id },
   );
-
   const [userVote, setUserVote] = useState<string | null>(null);
   const [vote, { error: voteError, isLoading: voteLoading }] =
     useVoteMutation();
@@ -35,6 +37,15 @@ const Poll = () => {
       setUserVote(data.userVote.id);
     }
   }, [data?.userVote, userVote]);
+
+  const onVote = async () => {
+    if (userVote !== null) {
+      await vote({
+        optionId: userVote,
+        pollId: id!,
+      }).unwrap();
+    }
+  };
 
   if (isLoading) {
     return <PollSkeleton />;
@@ -48,6 +59,9 @@ const Poll = () => {
     return <Error error={'Опитування не знайдено'} />;
   }
 
+  const isExpired =
+    !!data.expireAt && new Date(data.expireAt).getTime() <= Date.now();
+
   return (
     <menu
       className={'bg-foreground shadow-m rounded p-[20px] max-w-[765px] m-auto'}
@@ -56,6 +70,7 @@ const Poll = () => {
         title={data.title}
         creator={data.creator?.email || 'Анонім'}
         startDate={data.createdAt}
+        expireAt={data.expireAt}
       />
       <section className={'mt-[20px] flex font-normal'}>
         {data.description && (
@@ -76,8 +91,9 @@ const Poll = () => {
         {!data.description && <h2>Зроби свій вибір</h2>}
         <OptionsList
           options={data.options}
-          selectedOptionId={userVote ? userVote : ''}
+          selectedOptionId={userVote || ''}
           error={voteError}
+          isDisabled={isExpired}
           pollType={data.type}
           handleOptionChange={(optionId) => {
             setUserVote(optionId);
@@ -86,17 +102,10 @@ const Poll = () => {
         <div className={'flex'}>
           <MyButton
             label={'Проголосувати'}
-            isDisabled={!isAuth}
+            isDisabled={!isAuth || isExpired}
             type={'button'}
             isLoading={voteLoading}
-            onClick={async () => {
-              if (userVote !== null) {
-                await vote({
-                  optionId: userVote,
-                  pollId: id!,
-                });
-              }
-            }}
+            onClick={onVote}
             icon={arrow}
             iconRight={true}
             className={'pr-[20px] pl-[20px] mr-[20px]'}

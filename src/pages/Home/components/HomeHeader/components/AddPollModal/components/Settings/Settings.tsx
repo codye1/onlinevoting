@@ -7,16 +7,20 @@ import {
   visibilityOptions,
   voteIntervalOptions,
 } from '../../../../../../constants.ts';
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 import Errors from '@components/Errors.tsx';
-import { AddPollFormValues } from '../../lib/types.ts';
+import { useState } from 'react';
+import { AddPollRequest } from '@utils/types.ts';
 
 interface ISettings {
-  control: Control<AddPollFormValues>;
+  control: Control<AddPollRequest>;
   errors?: string[];
+  setValue: UseFormSetValue<AddPollRequest>;
 }
 
-const Settings = ({ control, errors }: ISettings) => {
+const Settings = ({ control, errors, setValue }: ISettings) => {
+  const [closePollOnDate, setClosePollOnDate] = useState<boolean>(false);
+
   return (
     <fieldset className={'pr-[5px] mt-[15px]'}>
       <section className="flex gap-[10px] mb-[15px]">
@@ -48,34 +52,34 @@ const Settings = ({ control, errors }: ISettings) => {
         />
       </section>
       <section className="flex">
-        <Controller
-          name="closePollOnDate"
-          control={control}
-          render={({ field }) => (
-            <SettingSection
-              label={'Закрити опитування в заплановану дату'}
-              checked={field.value}
-              setChecked={(checked) => field.onChange(checked)}
-              classNameChildren={'p-[5px]'}
-            >
-              <div className="flex flex-col">
-                <Controller
-                  name="expireAt"
-                  control={control}
-                  render={({ field: dateField }) => (
-                    <DateTimePicker
-                      className={'my-calendar max-w-[150px]'}
-                      onChange={(v) => dateField.onChange(v)}
-                      value={dateField.value}
-                    />
-                  )}
+        <SettingSection
+          label={'Закрити опитування в заплановану дату'}
+          checked={closePollOnDate}
+          setChecked={(checked) => {
+            setClosePollOnDate(checked);
+            if (checked) {
+              setValue('expireAt', new Date(Date.now() + 1000 * 60 * 2));
+            } else {
+              setValue('expireAt', null);
+            }
+          }}
+          classNameChildren={'p-[5px]'}
+        >
+          <div className="flex flex-col">
+            <Controller
+              name="expireAt"
+              control={control}
+              render={({ field: dateField }) => (
+                <DateTimePicker
+                  className={'my-calendar max-w-[150px]'}
+                  onChange={(v) => dateField.onChange(v)}
+                  value={dateField.value}
                 />
-                {errors && <Errors errors={errors} />}
-              </div>
-            </SettingSection>
-          )}
-        />
-
+              )}
+            />
+            {errors && <Errors errors={errors} />}
+          </div>
+        </SettingSection>
         <Controller
           name="changeVote"
           control={control}

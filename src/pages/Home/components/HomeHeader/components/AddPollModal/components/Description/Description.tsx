@@ -6,10 +6,10 @@ import ImageUploadInput from '@components/ImageUploadInput';
 import MyButton from '@components/MyButton';
 import { Control, Controller } from 'react-hook-form';
 import TextArea from '@components/TextArea.tsx';
-import { AddPollFormValues } from '../../lib/types';
+import { AddPollRequest } from '@utils/types';
 
 interface IDescription {
-  control: Control<AddPollFormValues>;
+  control: Control<AddPollRequest>;
   descriptionError?: string[];
   image: string;
   setImage: (url: string) => void;
@@ -79,20 +79,22 @@ const Description = ({
         >
           Приховати опис
         </p>
-        {modalUploadImageOpen && (
-          <Modal close={() => setModalUploadImageOpen(false)} inner={true}>
-            <div className={'p-[20px]'}>
-              <ImageUploadInput
-                name={'image'}
-                onImagesChange={(url) => {
-                  setImage(url[0]);
-                  setModalUploadImageOpen(false);
-                }}
-                maxImages={1}
-              />
-            </div>
-          </Modal>
-        )}
+        <Modal
+          isOpen={modalUploadImageOpen}
+          close={() => setModalUploadImageOpen(false)}
+          inner={true}
+        >
+          <div className={'p-[20px]'}>
+            <ImageUploadInput
+              name={'image'}
+              onImagesChange={(url) => {
+                setImage(url[0]);
+                setModalUploadImageOpen(false);
+              }}
+              maxImages={1}
+            />
+          </div>
+        </Modal>
       </div>
     </>
   );

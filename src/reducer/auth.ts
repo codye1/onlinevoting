@@ -8,13 +8,11 @@ export interface User {
 
 interface IAuth {
   isAuth: boolean;
-  authLoading: boolean;
   user: User;
 }
 
 const initialState: IAuth = {
   isAuth: false,
-  authLoading: false,
   user: {
     email: '',
     id: '',
@@ -29,12 +27,13 @@ const authSlice = createSlice({
       state.isAuth = true;
       state.user = action.payload;
     },
-    setAuthLoading(state, action: PayloadAction<boolean>) {
-      state.authLoading = action.payload;
+    logoutUser(state) {
+      state.isAuth = false;
+      state.user = { email: '', id: '' };
     },
   },
 });
 
-export const { authUser, setAuthLoading } = authSlice.actions;
+export const { authUser, logoutUser } = authSlice.actions;
 
 export default authSlice;

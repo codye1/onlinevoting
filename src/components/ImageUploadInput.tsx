@@ -1,33 +1,31 @@
 import { ChangeEvent, DragEvent, useState } from 'react';
-import { useUploadImagesToImgBBMutation } from '../reducer/api.ts';
+import { useUploadImagesToImgBBMutation } from '@reducer/api/slices/imageSlice.ts';
 import Spiner from './Spiner.tsx';
 import plus from '../public/plus.svg';
+import Error from './Error.tsx';
 
 type ImageUploadInputProps = {
   name: string;
   onImagesChange: (urls: string[]) => void;
-  maxImages?: number; // Maximum number of images allowed (undefined for unlimited)
-  currentImageCount?: number; // Current number of images in parent
+  maxImages?: number;
+  currentImageCount?: number;
 };
 
 const ImageUploadInput = ({
   name,
   onImagesChange,
-  maxImages, // Default is undefined (unlimited)
+  maxImages,
   currentImageCount = 0,
 }: ImageUploadInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadImages, { isLoading, error }] = useUploadImagesToImgBBMutation();
   const [limitError, setLimitError] = useState<string | null>(null);
 
-  // Handle file selection (via click or drop)
   const handleFiles = async (files: FileList) => {
     const newImages = Array.from(files).filter((file) =>
       file.type.startsWith('image/'),
     );
     if (newImages.length === 0) return;
-
-    // Check if adding new images exceeds the limit (only if maxImages is defined)
     if (maxImages !== undefined) {
       const totalImages = currentImageCount + newImages.length;
       if (totalImages > maxImages) {
@@ -36,19 +34,17 @@ const ImageUploadInput = ({
       }
     }
 
-    setLimitError(null); // Clear any previous limit error
-
+    setLimitError(null);
     try {
       // Upload images to ImgBB
       const urls = await uploadImages(newImages).unwrap();
-      onImagesChange(urls); // Notify parent with array of URLs
+      onImagesChange(urls);
     } catch (err) {
       console.error('Failed to upload images:', err);
-      onImagesChange([]); // Pass empty array on error
+      onImagesChange([]);
     }
   };
 
-  // Handle file input change (click to upload)
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
@@ -56,19 +52,16 @@ const ImageUploadInput = ({
     }
   };
 
-  // Handle drag over
   const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     setIsDragging(true);
   };
 
-  // Handle drag leave
   const handleDragLeave = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     setIsDragging(false);
   };
 
-  // Handle drop
   const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     setIsDragging(false);
@@ -114,14 +107,8 @@ const ImageUploadInput = ({
           <div className="mt-1 opacity-25 text-white">
             {isLoading ? 'Uploading...' : 'Add option(s)'}
           </div>
-          {error && (
-            <div className="mt-1 text-red-500 text-sm">
-              Failed to upload images
-            </div>
-          )}
-          {limitError && (
-            <div className="mt-1 text-red-500 text-sm">{limitError}</div>
-          )}
+          {error && <Error error={error} />}
+          {limitError && <Error error={limitError} />}
         </div>
       </label>
     </div>

@@ -3,7 +3,7 @@ import DropDown from '@components/DropDown/DropDown.tsx';
 import Error from '@components/Error.tsx';
 import Errors from '@components/Errors.tsx';
 import { typeOptions } from '../../../../../../constants.ts';
-import { PollType } from '@utils/types.ts';
+import { AddPollRequest, PollType } from '@utils/types.ts';
 import {
   Control,
   Controller,
@@ -14,12 +14,11 @@ import {
 
 import MultipleOptions from './components/MultipleOptions.tsx';
 import ImageOptions from './components/ImageOptions.tsx';
-import { AddPollFormValues } from '../../lib/types.ts';
 import ensureMultipleDefaults from '../../lib/ensureMultipleDefaults.ts';
 
 interface IOptionsList {
-  control: Control<AddPollFormValues>;
-  clearErrors: UseFormClearErrors<AddPollFormValues>;
+  control: Control<AddPollRequest>;
+  clearErrors: UseFormClearErrors<AddPollRequest>;
   optionsErrors?: string[];
   optionSchemaErrorMessage?: string;
 }
