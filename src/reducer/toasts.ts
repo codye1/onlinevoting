@@ -2,12 +2,12 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { AppDispatch } from './store';
 
-type toasTypes = 'success' | 'error' | 'warning';
+type toastTypes = 'success' | 'error' | 'warning';
 
 interface Toast {
   id: string;
   message: string;
-  type: toasTypes;
+  type: toastTypes;
   duration: number;
 }
 

@@ -8,7 +8,7 @@ import {
   type AddPollRequest,
 } from '@utils/types.ts';
 import getErrorMessage from '@utils/getErrorMessage.ts';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import getRhfErrorMessage from './lib/getRhfErrorMessage';
 import isRtkQueryError from './lib/isRtkQueryError';
@@ -32,16 +32,14 @@ const defaultValues: AddPollRequest = {
 };
 
 const getDefaultValues = (): AddPollRequest => {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      return parsed;
-    } catch {
-      return defaultValues;
-    }
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return defaultValues;
+    const parsed = JSON.parse(stored);
+    return parsed;
+  } catch {
+    return defaultValues;
   }
-  return defaultValues;
 };
 
 const useAddPollModal = (
@@ -49,6 +47,14 @@ const useAddPollModal = (
 ) => {
   const [addPoll, { isLoading }] = useAddPollMutation();
   const [apiErrors, setApiErrors] = useState<string[] | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelPendingSave = () => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
+    }
+  };
   const {
     control,
     handleSubmit,
@@ -66,10 +72,12 @@ const useAddPollModal = (
   const onSubmit = async (values: AddPollRequest) => {
     clearErrors();
     setApiErrors(null);
+    cancelPendingSave();
     try {
       await addPoll(values).unwrap();
       handleClose('created');
 
+      cancelPendingSave();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultValues));
       reset(defaultValues);
     } catch (e) {
@@ -81,27 +89,23 @@ const useAddPollModal = (
   const optionsSchemaMessage = getRhfErrorMessage(errors.options);
 
   useEffect(() => {
-    let timeOut: ReturnType<typeof setTimeout>;
-
     const subscription = watch((values) => {
-      clearTimeout(timeOut);
+      cancelPendingSave();
 
-      timeOut = setTimeout(() => {
+      saveTimeoutRef.current = setTimeout(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
       }, 500);
     });
 
     return () => {
       subscription.unsubscribe();
-      clearTimeout(timeOut);
+      cancelPendingSave();
     };
   }, [watch]);
 
   return {
     form: {
-      control: {
-        ...control,
-      },
+      control,
       errors,
       watch,
       setValue,

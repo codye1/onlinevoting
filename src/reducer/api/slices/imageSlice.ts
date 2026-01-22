@@ -23,6 +23,9 @@ export const imageSlice = apiSlice.injectEndpoints({
         try {
           const uploadPromises = files.map(async (file) => {
             const formData = new FormData();
+            if (!IMGBB_API_KEY) {
+              throw new Error('ImgBB API key is not defined');
+            }
             formData.append('key', IMGBB_API_KEY);
             formData.append('image', file);
             formData.append('name', file.name);

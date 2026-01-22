@@ -128,8 +128,6 @@ export const addPollValuesSchema = z
   })
   .superRefine((data, ctx) => {
     if (data.expireAt) {
-      console.log(data);
-
       const date = normalizeDateValue(data.expireAt);
 
       if (!date) {

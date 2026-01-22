@@ -61,7 +61,6 @@ const Poll = () => {
 
   const isExpired =
     !!data.expireAt && new Date(data.expireAt).getTime() <= Date.now();
-  console.log(isExpired);
 
   return (
     <menu

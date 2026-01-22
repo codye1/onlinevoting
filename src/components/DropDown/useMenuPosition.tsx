@@ -52,7 +52,7 @@ const useMenuPosition = ({ isOpen, setIsOpen }: IuseMenuPosition) => {
       window.removeEventListener('resize', handleReposition);
       window.removeEventListener('scroll', handleReposition, true);
     };
-  }, [isOpen]);
+  }, [isOpen, setIsOpen]);
 
   useLayoutEffect(() => {
     if (!isOpen) return;

@@ -74,3 +74,5 @@ Auth notes:
 - `src/reducer` — store/slices + RTK Query API.
 - `src/rout` — routing config.
 - `src/public` — SVG/icons.
+
+

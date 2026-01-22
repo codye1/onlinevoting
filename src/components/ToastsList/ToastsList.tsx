@@ -9,7 +9,15 @@ const ToastsList = () => {
       {toasts.map((toast) => (
         <li
           key={toast.id}
-          className={`m-4 p-4 rounded shadow-m text-default bg-foreground text-${toast.type} flex justify-between  items-center`}
+          className={`m-4 p-4 rounded shadow-m text-default bg-foreground ${
+            toast.type === 'success'
+              ? 'text-success'
+              : toast.type === 'error'
+                ? 'text-error'
+                : toast.type === 'warning'
+                  ? 'text-warning'
+                  : ''
+          } flex justify-between  items-center`}
         >
           {toast.message}
           <img
