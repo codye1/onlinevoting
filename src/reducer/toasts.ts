@@ -19,10 +19,6 @@ const toastsSlice = createSlice({
   reducers: {
     addToast(state, action: PayloadAction<Toast>) {
       state.push(action.payload);
-
-      setTimeout(() => {
-        removeToast(action.payload.id);
-      }, action.payload.duration);
     },
     removeToast(state, action: PayloadAction<string>) {
       return state.filter((toast) => toast.id !== action.payload);

@@ -21,7 +21,7 @@ const Header = () => {
   return (
     <header className="flex justify-between h-[50px] items-center text-2xl">
       <a
-        className="font-extrabold ml-2 cursor-pointer"
+        className="font-extrabold cursor-pointer"
         onClick={(e) => {
           e.preventDefault();
           navigate('/');
