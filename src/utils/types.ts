@@ -16,9 +16,9 @@ export interface Poll {
   };
   type: PollType;
   resultsVisibility: PollResultsVisibility;
-  changeVote: boolean;
   voteInterval: string;
-  expireAt?: Date;
+  expireAt: Date | null;
+  changeVote: boolean;
 }
 
 export enum Category {

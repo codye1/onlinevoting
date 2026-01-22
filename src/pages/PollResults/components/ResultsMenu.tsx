@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
-import { PollResultsResponse } from '../../../reducer/api';
+import { PollResultsResponse } from '@reducer/api/slices/pollSlice.ts';
 import { PollType } from '@utils/types';
 import ImageOption from './ImageOption';
 import MultipleOption from './MultipleOption';

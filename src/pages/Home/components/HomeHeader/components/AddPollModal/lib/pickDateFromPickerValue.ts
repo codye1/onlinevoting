@@ -1,4 +1,5 @@
-import { Value } from './types';
+type ValuePiece = Date | null;
+export type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const pickDateFromPickerValue = (value: Value): Date | undefined => {
   if (value instanceof Date && !Number.isNaN(value.getTime())) return value;

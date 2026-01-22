@@ -35,8 +35,8 @@ const ToggleCheckbox = ({
         className="hidden"
       />
       <div
-        className={`toggle-switch w-12 h-6 bg-[#4B4B4B] rounded-full relative transition-colors duration-300 ${
-          checked ? 'bg-[#808080]' : ''
+        className={`shadow-m toggle-switch w-12 h-6 rounded-full relative transition-colors duration-300 ${
+          checked ? 'bg-focus' : ' bg-light'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <div

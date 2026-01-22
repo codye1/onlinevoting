@@ -1,7 +1,7 @@
 import { Category } from '@utils/types';
 import { useEffect, useRef, useState } from 'react';
 import { QueryParams } from './Home';
-import { useGetPollsQuery } from '../../reducer/api';
+import { useGetPollsQuery } from '@reducer/api/slices/pollSlice.ts';
 import { IPollItem } from '@components/PollsList/PollItem';
 
 const useHome = () => {
@@ -16,7 +16,6 @@ const useHome = () => {
   const [polls, setPolls] = useState<IPollItem[]>([]);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const cursorRef = useRef<QueryParams['cursor']>(queryParams.cursor);
-
   const { data, error, isLoading, isFetching, refetch } =
     useGetPollsQuery(queryParams);
 
@@ -72,14 +71,16 @@ const useHome = () => {
     void refetch();
   };
   return {
+    polls: {
+      data: polls,
+      sentinelRef,
+      isLoading,
+      isFetching,
+      error,
+    },
     queryParams,
     setQueryParams,
     handlePollCreated,
-    data: polls,
-    sentinelRef,
-    isLoading,
-    isFetching,
-    error,
   };
 };
 

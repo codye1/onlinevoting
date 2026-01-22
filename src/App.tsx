@@ -1,44 +1,22 @@
 import { BrowserRouter } from 'react-router-dom';
 import Routing from './rout/routing.tsx';
-import { useRefreshMutation } from './reducer/api.ts';
+import { useRefreshMutation } from '@reducer/api/slices/authSlice.ts';
 import { useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { useAppDispatch } from '@hooks/hooks.tsx';
-import { authUser } from './reducer/auth.ts';
 import Header from './components/Header/Header.tsx';
-
-export interface DecodedToken {
-  userId: string;
-  email: string;
-  iat: number;
-  exp: number;
-}
+import ToastsList from '@components/ToastsList/ToastsList.tsx';
 
 function App() {
-  const [refresh, { data, isSuccess, isError }] = useRefreshMutation();
-  const dispatch = useAppDispatch();
+  const [refresh] = useRefreshMutation();
 
   useEffect(() => {
     refresh();
   }, [refresh]);
 
-  useEffect(() => {
-    if (isSuccess && data) {
-      const decoded = jwtDecode<DecodedToken>(data.accessToken);
-      if (!decoded.userId) return;
-      localStorage.setItem('token', data.accessToken);
-      dispatch(authUser({ email: decoded.email, id: decoded.userId }));
-    }
-
-    if (isError) {
-      localStorage.removeItem('token');
-    }
-  }, [data, isSuccess, isError, dispatch]);
-
   return (
     <BrowserRouter>
       <Header />
       <Routing />
+      <ToastsList />
     </BrowserRouter>
   );
 }

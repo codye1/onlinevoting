@@ -1,7 +1,8 @@
 import { ChangeEvent, DragEvent, useState } from 'react';
-import { useUploadImagesToImgBBMutation } from '../reducer/api.ts';
+import { useUploadImagesToImgBBMutation } from '@reducer/api/slices/imageSlice.ts';
 import Spiner from './Spiner.tsx';
 import plus from '../public/plus.svg';
+import Error from './Error.tsx';
 
 type ImageUploadInputProps = {
   name: string;
@@ -114,14 +115,8 @@ const ImageUploadInput = ({
           <div className="mt-1 opacity-25 text-white">
             {isLoading ? 'Uploading...' : 'Add option(s)'}
           </div>
-          {error && (
-            <div className="mt-1 text-red-500 text-sm">
-              Failed to upload images
-            </div>
-          )}
-          {limitError && (
-            <div className="mt-1 text-red-500 text-sm">{limitError}</div>
-          )}
+          {error && <Error error={error} />}
+          {limitError && <Error error={limitError} />}
         </div>
       </label>
     </div>

@@ -1,7 +1,6 @@
 import MyButton from '@components/MyButton.tsx';
 import login from '@actions/login.ts';
 import { FormEvent, startTransition, useActionState } from 'react';
-import { useAppSelector } from '@hooks/hooks.tsx';
 import TextInput from '@components/TextInput.tsx';
 import { inputTypes } from '@utils/types.ts';
 import Errors from '@components/Errors';
@@ -12,8 +11,7 @@ interface LoginForm {
 }
 
 const LoginForm = ({ onHaveAccount }: LoginForm) => {
-  const [state, action] = useActionState(login, undefined);
-  const isLoading = useAppSelector((state) => state.auth.authLoading);
+  const [state, action, isPending] = useActionState(login, undefined);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,7 +42,7 @@ const LoginForm = ({ onHaveAccount }: LoginForm) => {
         errors={state?.errors.password}
       />
       {state?.errors.auth && <Errors errors={state.errors.auth} />}
-      <MyButton type={'submit'} label={'Вхід'} isLoading={isLoading} />
+      <MyButton type={'submit'} label={'Вхід'} isLoading={isPending} />
 
       <p className={'mt-[30px] mb-[30px] text-base font-light'}>
         Ще не маєте облікового запису?{' '}

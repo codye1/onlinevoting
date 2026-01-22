@@ -29,12 +29,14 @@
     --c-foreground: 0.23 0 264;
     --c-light: 0.3 0 264;
     --c-hover: 0.35 0 264;
+    --c-selected: 0.32 0 264;
     --c-focus: 0.4 0 264;
     --c-border: 0.3 0 20;
     --c-default: 0.96 0 20;
     --c-muted: 0.76 0 20;
-    --c-danger: 0.65 0.2 25;
+    --c-error: 0.65 0.2 25;
     --c-success: 0.65 0.16 145;
+    --c-warning: 0.82 0.17 95;
 
     @apply bg-dark text-default antialiased flex justify-center items-center;
 
@@ -51,12 +53,14 @@
     --c-foreground: 0.96 0 20;
     --c-light: 1 0 20;
     --c-hover: 0.84 0 20;
+    --c-selected: 0.7 0 20;
     --c-focus: 0.8 0 20;
     --c-border: 0.82 0 20;
     --c-default: 0.15 0 20;
     --c-muted: 0.45 0 20;
-    --c-danger: 0.6 0.2 25;
+    --c-error: 0.6 0.2 25;
     --c-success: 0.55 0.16 145;
+    --c-warning: 0.72 0.16 95;
   }
 
   html[data-theme='dark'] {

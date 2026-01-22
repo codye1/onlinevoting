@@ -1,6 +1,6 @@
-import { OptionDraft } from './types';
+import { AddPollOptionDraft } from '@utils/types';
 
-const ensureMultipleDefaults = (options: OptionDraft[]) => {
+const ensureMultipleDefaults = (options: AddPollOptionDraft[]) => {
   if (options.length >= 2) return options;
   if (options.length === 1) return [...options, { file: null, title: '' }];
   return [

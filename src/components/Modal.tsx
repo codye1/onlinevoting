@@ -1,15 +1,15 @@
-// Modal.tsx
-
 import closeIcon from '../public/close.svg';
 import { ReactNode } from 'react';
 
 interface ModalProps {
   children: ReactNode;
   close: () => void;
+  isOpen: boolean;
   inner?: boolean;
 }
 
-const Modal = ({ children, close, inner }: ModalProps) => {
+const Modal = ({ children, close, inner, isOpen }: ModalProps) => {
+  if (!isOpen) return null;
   return (
     <div
       className={`${inner ? 'absolute' : 'fixed'} inset-0 z-40 flex items-center justify-center `}
