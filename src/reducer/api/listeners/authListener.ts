@@ -8,6 +8,10 @@ import authSlice from '../slices/authSlice';
 import type { AppStartListening } from '../listenerMiddleware';
 import type { AppDispatch, RootState } from '@reducer/store';
 
+type AuthResponse = {
+  accessToken: string;
+};
+
 export interface DecodedToken {
   userId: string;
   email: string;
@@ -34,10 +38,8 @@ export const addAuthListeners = (startAppListening: AppStartListening) => {
       authSlice.endpoints.googleLogin.matchFulfilled,
     ),
     effect: async (action, api) => {
-      handleAuthSuccess(
-        (action.payload as { accessToken: string }).accessToken,
-        api,
-      );
+      const response = action.payload as AuthResponse;
+      handleAuthSuccess(response.accessToken, api);
 
       addToastWithTimeout({
         id: nanoid(),
@@ -98,17 +100,16 @@ export const addAuthListeners = (startAppListening: AppStartListening) => {
   startAppListening({
     matcher: authSlice.endpoints.refresh.matchFulfilled,
     effect: async (action, api) => {
-      handleAuthSuccess(
-        (action.payload as { accessToken: string }).accessToken,
-        api,
-      );
+      const response = action.payload as AuthResponse;
+      handleAuthSuccess(response.accessToken, api);
     },
   });
 
   startAppListening({
     matcher: authSlice.endpoints.refresh.matchRejected,
-    effect: async () => {
+    effect: async (_action, api) => {
       localStorage.removeItem('token');
+      api.dispatch(logoutUser());
     },
   });
 };

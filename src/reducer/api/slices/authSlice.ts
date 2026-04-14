@@ -1,5 +1,4 @@
-// features/auth/authApi.ts
-import { apiSlice } from '../api';
+import apiSlice from '../api';
 
 export interface AuthResponse {
   accessToken: string;

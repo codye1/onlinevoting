@@ -1,5 +1,5 @@
 import { fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { apiSlice } from '../api';
+import apiSlice from '../api';
 
 interface ImgBBResponse {
   data: {
