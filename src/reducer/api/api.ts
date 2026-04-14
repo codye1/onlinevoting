@@ -4,10 +4,7 @@ import type {
   FetchArgs,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query';
-
-type RefreshResponse = {
-  accessToken: string;
-};
+import getErrorCode from '@utils/getErrorCode';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -30,39 +27,23 @@ const baseQueryWithReauth: BaseQueryFn<
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
-
-  const error = result.error;
+  const { default: authSlice } = await import('./slices/authSlice');
+  const code = getErrorCode(result.error);
   const isUnauthorized =
-    !!error &&
-    ((typeof error.status === 'number' &&
-      (error.status === 401 || error.status === 403)) ||
-      (error.status === 'PARSING_ERROR' &&
-        (error as unknown as { originalStatus?: number }).originalStatus ===
-          401));
-
+    code === 'TOKEN_EXPIRED' && result.error?.status === 401;
+  console.log(code);
+  console.log(result.error);
   if (isUnauthorized) {
-    const refreshResult = await baseQuery(
-      {
-        url: 'refresh',
-        method: 'POST',
-      },
-      api,
-      extraOptions,
-    );
-
-    if (refreshResult.data) {
-      const data = refreshResult.data as RefreshResponse;
-      localStorage.setItem('token', data.accessToken);
-      result = await baseQuery(args, api, extraOptions);
-    } else {
-      localStorage.removeItem('token');
-    }
+    await api.dispatch(authSlice.endpoints.refresh.initiate());
+    result = await baseQuery(args, api, extraOptions);
   }
   return result;
 };
 
-export const apiSlice = createApi({
+const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}),
 });
+
+export default apiSlice;

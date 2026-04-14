@@ -1,5 +1,5 @@
 import { AddPollRequest, Poll, PollOption } from '@utils/types';
-import { apiSlice } from '../api';
+import apiSlice from '../api';
 import { IPollItem } from '@components/PollsList/PollItem';
 import { QueryParams } from 'src/pages/Home/Home';
 import { Vote } from 'src/pages/Poll/Poll';

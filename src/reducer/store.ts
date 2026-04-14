@@ -5,7 +5,7 @@ import {
   type ThunkDispatch,
 } from '@reduxjs/toolkit';
 import authSlice from './auth';
-import { apiSlice } from './api/api.ts';
+import apiSlice from './api/api.ts';
 import { listenerMiddleware } from './api/listenerMiddleware';
 import generalSlice from './general.tsx';
 import toastsSlice from './toasts.ts';

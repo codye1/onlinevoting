@@ -1,0 +1,18 @@
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const getErrorCode = (
+  error: FetchBaseQueryError | undefined,
+): string | undefined => {
+  if (!error) return undefined;
+
+  const data = error.data;
+  if (!isRecord(data)) return undefined;
+
+  const code = data.code;
+  return typeof code === 'string' ? code : undefined;
+};
+
+export default getErrorCode;
